@@ -10,10 +10,14 @@ class ExamsViewModel extends ChangeNotifier {
   String? error;
 
   ExamsViewModel() {
-    fetchExams();
+    if (ApiService.getToken() != null) {
+      fetchExams();
+    }
   }
 
   Future<void> fetchExams() async {
+    if (ApiService.getToken() == null) return;
+    
     isLoading = true;
     error = null;
     notifyListeners();

@@ -12,6 +12,9 @@ const Course = require("./models/course");
 const Exam = require("./models/exam");
 const AcademicYear = require("./models/academic_year");
 const Enrollment = require("./models/enrollment");
+const Document = require("./models/document");
+const Message = require("./models/message");
+const Announcement = require("./models/announcement");
 
 const connectDB = require("./config/db");
 
@@ -31,6 +34,9 @@ async function seedDB() {
     await Exam.deleteMany({});
     await AcademicYear.deleteMany({});
     await Enrollment.deleteMany({});
+    await Document.deleteMany({});
+    await Message.deleteMany({});
+    await Announcement.deleteMany({});
     console.log("Cleared existing data");
 
     // Create Academic Year
@@ -404,6 +410,176 @@ async function seedDB() {
       },
     ]);
     console.log("Tickets created:", tickets.length);
+
+    // Create documents for courses - query courses from DB to ensure they exist
+    console.log("Fetching courses from database...");
+    const existingCourses = await Course.find({}).limit(2);
+    console.log("Found courses:", existingCourses.length);
+    console.log("Total users:", allUsers.length);
+    
+    if (existingCourses && existingCourses.length > 0 && allUsers.length > 32) {
+      console.log("Creating documents...");
+      const documentsData = [
+        {
+          title: "Chapitre 1 - Introduction",
+          description: "Introduction aux bases du cours",
+          course: existingCourses[0]._id,
+          fileUrl: "/docs/chapter1.pdf",
+          fileType: "pdf",
+          uploadedBy: allUsers[30]._id, // Professor
+          downloads: 15,
+          isPublished: true
+        },
+        {
+          title: "TP 1 - Exercices pratiques",
+          description: "Exercices à faire avant la prochaine séance",
+          course: existingCourses[0]._id,
+          fileUrl: "/docs/tp1.pdf",
+          fileType: "pdf",
+          uploadedBy: allUsers[30]._id,
+          downloads: 12,
+          isPublished: true
+        },
+        {
+          title: "Slides - Semaine 1",
+          description: "Présentations PowerPoint de la semaine",
+          course: existingCourses[0]._id,
+          fileUrl: "/docs/slides_week1.pptx",
+          fileType: "pptx",
+          uploadedBy: allUsers[30]._id,
+          downloads: 28,
+          isPublished: true
+        },
+      ];
+      
+      if (existingCourses.length > 1) {
+        documentsData.push({
+          title: "Résumé - Chapitre 2",
+          description: "Résumé du deuxième chapitre",
+          course: existingCourses[1]._id,
+          fileUrl: "/docs/summary_chapter2.pdf",
+          fileType: "pdf",
+          uploadedBy: allUsers[31]._id,
+          downloads: 8,
+          isPublished: true
+        });
+        documentsData.push({
+          title: "Code source - Projet",
+          description: "Code de référence pour le projet",
+          course: existingCourses[1]._id,
+          fileUrl: "/docs/project_source.zip",
+          fileType: "other",
+          uploadedBy: allUsers[31]._id,
+          downloads: 20,
+          isPublished: true
+        });
+      }
+      
+      console.log("Document data prepared, inserting...");
+      const documents = await Document.insertMany(documentsData);
+      console.log("Documents created:", documents.length);
+    } else {
+      console.log("Skipping documents creation: courses=" + existingCourses.length + ", users=" + allUsers.length);
+    }
+
+    // Create sample messages between students and professors
+    const messages = await Message.insertMany([
+      {
+        sender: allUsers[0]._id, // student1
+        recipient: allUsers[30]._id, // professor
+        course: courses[0]._id,
+        content: "Bonjour professeur, j'ai une question sur le cours d'aujourd'hui.",
+        isRead: true
+      },
+      {
+        sender: allUsers[30]._id, // professor
+        recipient: allUsers[0]._id, // student1
+        course: courses[0]._id,
+        content: "Bonjour! Bien sûr, n'hésite pas à demander.",
+        isRead: true
+      },
+      {
+        sender: allUsers[0]._id, // student1
+        recipient: allUsers[30]._id, // professor
+        content: "Pouvez-vous expliquer le dernier sujet plus en détail?",
+        isRead: true
+      },
+      {
+        sender: allUsers[30]._id, // professor
+        recipient: allUsers[0]._id, // student1
+        content: "Bien sûr! Je t'enverrai les slides détaillés par email.",
+        isRead: false
+      },
+      {
+        sender: allUsers[1]._id, // student2
+        recipient: allUsers[31]._id, // professor2
+        course: courses[1]._id,
+        content: "Quand est la date limite pour le devoir?",
+        isRead: true
+      },
+      {
+        sender: allUsers[31]._id, // professor2
+        recipient: allUsers[1]._id, // student2
+        content: "La date limite est le 15 janvier.",
+        isRead: true
+      },
+      {
+        sender: allUsers[2]._id, // student3
+        recipient: allUsers[30]._id, // professor
+        content: "Je suis absent demain. Je peux faire un rattrapage?",
+        isRead: false
+      }
+    ]);
+    console.log("Messages created:", messages.length);
+
+    // Create announcements for classes
+    const announcements = await Announcement.insertMany([
+      {
+        title: "Contrôle continu - Semaine prochaine",
+        content: "Un contrôle continu aura lieu la semaine prochaine sur les chapitres 1 et 2. Veuillez préparer vos notes.",
+        class: classes[0]._id,
+        createdBy: allUsers[30]._id, // professor
+        priority: "high",
+        isPinned: true
+      },
+      {
+        title: "Remise des devoirs",
+        content: "N'oubliez pas de remettre vos devoirs avant vendredi à 17h. Les retards ne seront pas acceptés.",
+        class: classes[0]._id,
+        createdBy: allUsers[30]._id,
+        priority: "high",
+        isPinned: true
+      },
+      {
+        title: "Réunion de classe - Lundi 6 janvier",
+        content: "Une réunion de classe aura lieu lundi prochain à 14h en salle A101. Veuillez confirmer votre présence.",
+        class: classes[0]._id,
+        createdBy: allUsers[30]._id,
+        priority: "medium"
+      },
+      {
+        title: "Nouveau sujet de projet",
+        content: "Le sujet du projet final pour ce semestre a été publié. Consultez le lien partagé sur le portail.",
+        class: classes[0]._id,
+        createdBy: allUsers[31]._id,
+        priority: "medium"
+      },
+      {
+        title: "Absence du professeur",
+        content: "Je serai en formation toute la journée du jeudi. Le cours sera reporté à une autre date.",
+        class: classes[1]._id,
+        createdBy: allUsers[31]._id,
+        priority: "medium"
+      },
+      {
+        title: "Annonce importante",
+        content: "Les résultats des examens de janvier seront publiés le 15 février.",
+        class: classes[0]._id,
+        createdBy: allUsers[30]._id,
+        priority: "low"
+      }
+    ]);
+    console.log("Announcements created:", announcements.length);
 
     console.log("\n✅ Database seeded successfully!");
     process.exit(0);

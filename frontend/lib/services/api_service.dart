@@ -13,8 +13,16 @@ class ApiService {
         'Content-Type': 'application/json',
       };
 
-      if (requiresAuth && _token != null) {
+      if (requiresAuth) {
+        if (_token == null) {
+          throw Exception('Token manquant - veuillez vous reconnecter');
+        }
         headers['Authorization'] = 'Bearer $_token';
+      }
+
+      print('GET $baseUrl$endpoint');
+      if (requiresAuth) {
+        print('Token: ${_token?.substring(0, 20)}...');
       }
 
       final response = await http.get(
@@ -22,12 +30,16 @@ class ApiService {
         headers: headers,
       ).timeout(timeout);
 
+      print('Response status: ${response.statusCode}');
+      
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
+        print('Error response: ${response.body}');
         throw Exception('Erreur ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
+      print('API GET Error: $e');
       throw Exception('Erreur de connexion: $e');
     }
   }
@@ -114,12 +126,16 @@ class ApiService {
 
   // Auth methods
   static Future<Map<String, dynamic>> login(String email, String password) async {
+    print('Login attempt for: $email');
     final response = await post('/auth/login', {
       'email': email,
       'password': password,
     });
     if (response['token'] != null) {
       _token = response['token'];
+      print('Token saved: ${_token?.substring(0, 20)}...');
+    } else {
+      print('No token in response!');
     }
     return response;
   }

@@ -9,10 +9,14 @@ class AbsencesViewModel extends ChangeNotifier {
   String? error;
 
   AbsencesViewModel() {
-    fetchAbsences();
+    if (ApiService.getToken() != null) {
+      fetchAbsences();
+    }
   }
 
   Future<void> fetchAbsences() async {
+    if (ApiService.getToken() == null) return;
+    
     isLoading = true;
     error = null;
     notifyListeners();

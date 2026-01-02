@@ -8,10 +8,14 @@ class CoursesViewModel extends ChangeNotifier {
   String? error;
 
   CoursesViewModel() {
-    fetchCourses();
+    if (ApiService.getToken() != null) {
+      fetchCourses();
+    }
   }
 
   Future<void> fetchCourses() async {
+    if (ApiService.getToken() == null) return;
+    
     isLoading = true;
     error = null;
     notifyListeners();

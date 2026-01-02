@@ -9,10 +9,14 @@ class NotesViewModel extends ChangeNotifier {
   String? error;
 
   NotesViewModel() {
-    fetchNotes();
+    if (ApiService.getToken() != null) {
+      fetchNotes();
+    }
   }
 
   Future<void> fetchNotes() async {
+    if (ApiService.getToken() == null) return;
+    
     isLoading = true;
     error = null;
     notifyListeners();

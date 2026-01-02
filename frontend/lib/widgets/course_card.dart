@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../models/course_model.dart';
+import '../views/documents_view.dart';
 
 class CourseCard extends StatelessWidget {
   final CourseModel course;
@@ -147,7 +148,19 @@ class CourseCard extends StatelessWidget {
                   text: "Documents",
                   bgColor: const Color(0xFFE3F2FD), // Bleu fond
                   textColor: Colors.blue, // Bleu texte
-                  onPressed: () {},
+                  onPressed: () {
+                    if (course.id != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DocumentsView(
+                            courseId: course.id!,
+                            courseName: course.title,
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
             ],

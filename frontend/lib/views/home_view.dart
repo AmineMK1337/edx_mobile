@@ -6,6 +6,8 @@ import 'package:my_app/widgets/custom_card.dart';
 import 'package:my_app/views/exams_view.dart';
 import 'package:my_app/views/calendar_view.dart';
 import 'package:my_app/views/notes_view.dart';
+import 'package:my_app/views/messages_view.dart';
+import 'package:my_app/views/announcements_view.dart';
 import 'absences_view.dart';
 import 'courses_view.dart';
 
@@ -76,6 +78,10 @@ class HomeView extends StatelessWidget {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => AbsencesView()));
                           } else if (item.title == "Mes Cours") {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => CoursesView()));
+                          } else if (item.title == "Messages") {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const MessagesView()));
+                          } else if (item.title == "Annonces") {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => const AnnouncementsView()));
                           }
                         },
                         child: MenuGridItem(item: item),

@@ -9,10 +9,14 @@ class CalendarViewModel extends ChangeNotifier {
   String? error;
 
   CalendarViewModel() {
-    fetchEvents();
+    if (ApiService.getToken() != null) {
+      fetchEvents();
+    }
   }
 
   Future<void> fetchEvents() async {
+    if (ApiService.getToken() == null) return;
+    
     isLoading = true;
     error = null;
     notifyListeners();

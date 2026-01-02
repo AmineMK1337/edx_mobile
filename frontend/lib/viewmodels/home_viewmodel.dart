@@ -30,10 +30,18 @@ class HomeViewModel extends ChangeNotifier {
   ];
 
   HomeViewModel() {
-    fetchStats();
+    // Only fetch stats if user is logged in (token exists)
+    if (ApiService.getToken() != null) {
+      fetchStats();
+    }
   }
 
   Future<void> fetchStats() async {
+    // Don't fetch if no token available
+    if (ApiService.getToken() == null) {
+      return;
+    }
+
     isLoading = true;
     error = null;
     notifyListeners();
