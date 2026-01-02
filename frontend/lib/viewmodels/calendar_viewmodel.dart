@@ -18,19 +18,16 @@ class CalendarViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await ApiService.get('/events');
+      final response = await ApiService.get('/events', requiresAuth: true);
       
       if (response is List) {
-        events = response.map((data) {
-          return CalendarEventModel(
-            title: data['title'] ?? '',
-            type: _stringToEventType(data['type']),
-            date: data['date'] ?? '',
-            time: data['time'] ?? '',
-            location: data['location'] ?? '',
-            group: data['group'] ?? '',
-          );
-        }).toList();
+        events = response.map((data) => CalendarEventModel.fromJson(Map<String, dynamic>.from(data))).toList();
+      } else if (response is Map && response['data'] is List) {
+        events = (response['data'] as List)
+            .map((data) => CalendarEventModel.fromJson(Map<String, dynamic>.from(data)))
+            .toList();
+      } else {
+        events = [];
       }
       
       isLoading = false;
@@ -42,32 +39,23 @@ class CalendarViewModel extends ChangeNotifier {
     }
   }
 
-  EventType _stringToEventType(String type) {
-    switch (type) {
-      case 'reunion':
-        return EventType.reunion;
-      case 'tp':
-        return EventType.tp;
-      case 'personnel':
-        return EventType.personnel;
-      case 'examen':
-      default:
-        return EventType.examen;
-    }
-  }
-
   // Helper pour obtenir le style du badge selon le type
   Map<String, dynamic> getEventTypeStyle(EventType type) {
     switch (type) {
-      case EventType.examen:
+      case EventType.exam:
         return {'label': 'Examen', 'bg': AppColors.tagExamBg, 'text': AppColors.tagExamText};
-      case EventType.reunion:
+      case EventType.meeting:
         return {'label': 'Réunion', 'bg': AppColors.tagMeetingBg, 'text': AppColors.tagMeetingText};
       case EventType.tp:
         return {'label': 'TP', 'bg': AppColors.tagTpBg, 'text': AppColors.tagTpText};
-      case EventType.personnel:
+      case EventType.td:
+        return {'label': 'TD', 'bg': AppColors.tagTpBg, 'text': AppColors.tagTpText};
+      case EventType.course:
+        return {'label': 'Cours', 'bg': AppColors.tagExamBg, 'text': AppColors.tagExamText};
+      case EventType.holiday:
+        return {'label': 'Vacances', 'bg': AppColors.tagPersoBg, 'text': AppColors.tagPersoText};
+      case EventType.personal:
         return {'label': 'Personnel', 'bg': AppColors.tagPersoBg, 'text': AppColors.tagPersoText};
     }
   }
 }
-

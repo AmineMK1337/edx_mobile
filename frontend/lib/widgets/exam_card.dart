@@ -5,14 +5,15 @@ import '../viewmodels/exams_viewmodel.dart';
 
 class ExamCard extends StatelessWidget {
   final ExamModel exam;
-  final ExamsViewModel viewModel = ExamsViewModel();
+  final VoidCallback onEdit;
+  final VoidCallback onDetails;
 
-  ExamCard({super.key, required this.exam});
+  ExamCard({super.key, required this.exam, required this.onEdit, required this.onDetails});
 
   @override
   Widget build(BuildContext context) {
-    final statusProps = viewModel.getStatusProps(exam.status);
-    final isPlanifie = exam.status == ExamStatus.planifie;
+    final statusProps = ExamsViewModel.statusPropsFor(exam.status);
+    final isPlanifie = exam.status == ExamStatus.scheduled;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -83,7 +84,7 @@ class ExamCard extends StatelessWidget {
               _buildInfoBlock(
                 Icons.calendar_today,
                 "Date",
-                "${exam.date}\n${exam.time}",
+                "${exam.formattedDate}\n${exam.time}",
                 AppColors.infoPurpleBg,
                 Colors.purple,
               ),
@@ -107,7 +108,7 @@ class ExamCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.access_time, size: 18, color: AppColors.textGrey),
                   const SizedBox(width: 5),
-                  Text(exam.duration, style: const TextStyle(color: AppColors.textGrey)),
+                  Text('${exam.duration} min', style: const TextStyle(color: AppColors.textGrey)),
                 ],
               ),
               Row(
@@ -127,7 +128,7 @@ class ExamCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: onEdit,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.green,
                       side: const BorderSide(color: Colors.green),
@@ -139,7 +140,7 @@ class ExamCard extends StatelessWidget {
                 const SizedBox(width: 15),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: onDetails,
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.blue,
                       side: const BorderSide(color: Colors.blue),

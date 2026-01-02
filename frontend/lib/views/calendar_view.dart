@@ -5,7 +5,7 @@ import '../viewmodels/calendar_viewmodel.dart';
 import '../widgets/calendar_widgets.dart';
 
 class CalendarView extends StatelessWidget {
-  const CalendarView({super.key});
+  CalendarView({super.key});
 
   @override
   Widget build(BuildContext context) {

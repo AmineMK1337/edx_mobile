@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      index: true
     },
     password: {
       type: String,
@@ -21,10 +22,23 @@ const UserSchema = new mongoose.Schema(
       required: true
     },
     class: {
-      type: String, // seulement pour student
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class" // seulement pour student
+    },
+    matricule: {
+      type: String,
+      index: true // seulement pour student
+    },
+    isActive: {
+      type: Boolean,
+      default: true
     }
   },
   { timestamps: true }
 );
+
+// Indexes for faster queries
+UserSchema.index({ role: 1 });
+UserSchema.index({ class: 1 });
 
 module.exports = mongoose.model("User", UserSchema);

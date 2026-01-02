@@ -5,6 +5,9 @@ import 'package:my_app/viewmodels/home_viewmodel.dart';
 import 'package:my_app/widgets/custom_card.dart';
 import 'package:my_app/views/exams_view.dart';
 import 'package:my_app/views/calendar_view.dart';
+import 'package:my_app/views/notes_view.dart';
+import 'absences_view.dart';
+import 'courses_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -62,8 +65,17 @@ class HomeView extends StatelessWidget {
                           } else if (item.title == "Calendrier") {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const CalendarView()),
+                              MaterialPageRoute(builder: (context) => CalendarView()),
                             );
+                          } else if (item.title == "Notes") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => NotesView()),
+                            );
+                          } else if (item.title == "Absences") {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AbsencesView()));
+                          } else if (item.title == "Mes Cours") {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => CoursesView()));
                           }
                         },
                         child: MenuGridItem(item: item),

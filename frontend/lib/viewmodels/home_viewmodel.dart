@@ -40,14 +40,15 @@ class HomeViewModel extends ChangeNotifier {
 
     try {
       // Fetch data from APIs
-      final schedules = await ApiService.get('/schedules');
-      final exams = await ApiService.get('/exams');
+      final schedules = await ApiService.get('/schedules', requiresAuth: true);
+      final exams = await ApiService.get('/exams', requiresAuth: true);
+      final students = await ApiService.get('/users/students', requiresAuth: true);
       
       // Update stats
       stats = {
-        "Cours": (schedules is List ? schedules.length : 0).toString(),
-        "Étudiants": "156", // TODO: fetch from API
-        "Examens": (exams is List ? exams.length : 0).toString(),
+        "Cours": (schedules is List ? schedules.length : (schedules is Map && schedules['data'] is List ? (schedules['data'] as List).length : 0)).toString(),
+        "Étudiants": (students is List ? students.length : (students is Map && students['data'] is List ? (students['data'] as List).length : 0)).toString(),
+        "Examens": (exams is List ? exams.length : (exams is Map && exams['data'] is List ? (exams['data'] as List).length : 0)).toString(),
       };
       
       isLoading = false;

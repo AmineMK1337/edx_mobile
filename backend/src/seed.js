@@ -7,6 +7,11 @@ const Note = require("./models/note");
 const Schedule = require("./models/schedule");
 const Ticket = require("./models/ticket");
 const Absence = require("./models/absence");
+const Class = require("./models/class");
+const Course = require("./models/course");
+const Exam = require("./models/exam");
+const AcademicYear = require("./models/academic_year");
+const Enrollment = require("./models/enrollment");
 
 const connectDB = require("./config/db");
 
@@ -21,148 +26,378 @@ async function seedDB() {
     await Schedule.deleteMany({});
     await Ticket.deleteMany({});
     await Absence.deleteMany({});
+    await Class.deleteMany({});
+    await Course.deleteMany({});
+    await Exam.deleteMany({});
+    await AcademicYear.deleteMany({});
+    await Enrollment.deleteMany({});
     console.log("Cleared existing data");
 
-    // Create users
+    // Create Academic Year
+    const academicYear = await AcademicYear.create({
+      year: "2025-2026",
+      semester: "1",
+      startDate: new Date("2025-09-01"),
+      endDate: new Date("2026-01-31"),
+      isCurrent: true
+    });
+    console.log("Academic year created");
+
+    // Create Classes
+    const classes = await Class.insertMany([
+      {
+        name: "2A",
+        level: "2",
+        section: "A",
+        academicYear: academicYear._id,
+        studentCount: 30,
+        isActive: true
+      },
+      {
+        name: "2B",
+        level: "2",
+        section: "B",
+        academicYear: academicYear._id,
+        studentCount: 0,
+        isActive: true
+      },
+      {
+        name: "3A",
+        level: "3",
+        section: "A",
+        academicYear: academicYear._id,
+        studentCount: 0,
+        isActive: true
+      }
+    ]);
+    console.log("Classes created:", classes.length);
+
+    // Create users - 30 students + professors
     const hashedPassword = await bcrypt.hash("password123", 10);
 
-    const users = await User.insertMany([
+    const studentNames = [
+      "Mohamed Saidi", "Leila Hadj", "Ali Ben Ahmed", "Fatima Zahra", "Hassan Ali",
+      "Amina Boulay", "Karim Saoudi", "Noor Al-Rashid", "Rania Djaout", "Youssef Bouazza",
+      "Sara Ben Youssef", "Abdelhamid Kadi", "Mariam El-Fassi", "Ismail Belkacem", "Zainab Moussa",
+      "Omar El-Hadj", "Hana Berri", "Bilal Osman", "Leila Bennaceur", "Farah Hamra",
+      "Jamal Nasri", "Selma Bellal", "Ahmed Oudjedi", "Nawal Bouzidi", "Tariq El-Kadi",
+      "Yasmine Tabet", "Mourad El-Berri", "Layla Bennani", "Ramzi Bouhafs", "Samira Oudjani"
+    ];
+
+    const students = studentNames.map((name, index) => ({
+      name: name,
+      email: `student${index + 1}@example.com`,
+      password: hashedPassword,
+      role: "student",
+      class: classes[0]._id, // All in 2A class
+      matricule: `MAT${String(index + 1).padStart(5, '0')}`,
+      isActive: true
+    }));
+
+    const professors = [
       {
-        name: "Ahmed Kaddour",
+        name: "Dr. Ahmed Kaddour",
         email: "ahmed@example.com",
         password: hashedPassword,
         role: "professor",
+        isActive: true
       },
       {
-        name: "Fatima Ben Ali",
+        name: "Dr. Fatima Ben Ali",
         email: "fatima@example.com",
         password: hashedPassword,
         role: "professor",
+        isActive: true
+      },
+    ];
+
+    const admin = {
+      name: "Admin User",
+      email: "admin@example.com",
+      password: hashedPassword,
+      role: "admin",
+      isActive: true
+    };
+
+    const allUsers = await User.insertMany([...students, ...professors, admin]);
+    console.log("Users created:", allUsers.length);
+
+    // Create Courses
+    const courses = await Course.insertMany([
+      {
+        title: "Réseaux informatiques",
+        code: "NET101",
+        level: "2",
+        class: classes[0]._id,
+        studentCount: 30,
+        hoursPerWeek: 4,
+        nextDayTime: new Date("2026-01-06T08:00:00"),
+        location: "Salle A101",
+        professor: allUsers[30]._id,
+        academicYear: academicYear._id,
+        isActive: true
       },
       {
-        name: "Mohamed Saidi",
-        email: "mohamed@example.com",
-        password: hashedPassword,
-        role: "student",
-        class: "2A - RT",
+        title: "Sécurité des réseaux",
+        code: "SEC201",
+        level: "2",
+        class: classes[0]._id,
+        studentCount: 30,
+        hoursPerWeek: 3,
+        nextDayTime: new Date("2026-01-06T10:30:00"),
+        location: "Salle B203",
+        professor: allUsers[31]._id,
+        academicYear: academicYear._id,
+        isActive: true
       },
       {
-        name: "Leila Hadj",
-        email: "leila@example.com",
-        password: hashedPassword,
-        role: "student",
-        class: "2A - RT",
+        title: "Administration système",
+        code: "SYS301",
+        level: "2",
+        class: classes[0]._id,
+        studentCount: 30,
+        hoursPerWeek: 3,
+        nextDayTime: new Date("2026-01-08T14:00:00"),
+        location: "Lab 1",
+        professor: allUsers[30]._id,
+        academicYear: academicYear._id,
+        isActive: true
       },
       {
-        name: "Admin User",
-        email: "admin@example.com",
-        password: hashedPassword,
-        role: "admin",
+        title: "Programmation Web",
+        code: "WEB401",
+        level: "2",
+        class: classes[0]._id,
+        studentCount: 30,
+        hoursPerWeek: 4,
+        nextDayTime: new Date("2026-01-10T09:00:00"),
+        location: "Lab 2",
+        professor: allUsers[31]._id,
+        academicYear: academicYear._id,
+        isActive: true
       },
     ]);
-    console.log("Users created:", users.length);
+    console.log("Courses created:", courses.length);
+
+    // Create Enrollments for all students in all courses
+    const enrollments = [];
+    for (let i = 0; i < 30; i++) {
+      for (let j = 0; j < courses.length; j++) {
+        enrollments.push({
+          student: allUsers[i]._id,
+          course: courses[j]._id,
+          class: classes[0]._id,
+          academicYear: academicYear._id,
+          status: "active",
+          enrollmentDate: new Date("2025-09-01")
+        });
+      }
+    }
+    await Enrollment.insertMany(enrollments);
+    console.log("Enrollments created:", enrollments.length);
 
     // Create schedules
     const schedules = await Schedule.insertMany([
       {
-        class: "2A - RT",
+        class: classes[0]._id,
+        course: courses[0]._id,
         day: "Monday",
         startTime: "08:00",
         endTime: "10:00",
-        subject: "Réseaux informatiques",
-        professor: users[0]._id,
+        professor: allUsers[30]._id,
+        location: "Salle A101",
         isRattrapage: false,
+        academicYear: academicYear._id
       },
       {
-        class: "2A - RT",
+        class: classes[0]._id,
+        course: courses[1]._id,
         day: "Monday",
         startTime: "10:30",
         endTime: "12:30",
-        subject: "Sécurité des réseaux",
-        professor: users[1]._id,
+        professor: allUsers[31]._id,
+        location: "Salle B203",
         isRattrapage: false,
+        academicYear: academicYear._id
       },
       {
-        class: "2A - RT",
+        class: classes[0]._id,
+        course: courses[2]._id,
         day: "Wednesday",
         startTime: "14:00",
         endTime: "16:00",
-        subject: "Administration système",
-        professor: users[0]._id,
+        professor: allUsers[30]._id,
+        location: "Lab 1",
         isRattrapage: false,
+        academicYear: academicYear._id
       },
       {
-        class: "2A - RT",
+        class: classes[0]._id,
+        course: courses[3]._id,
         day: "Friday",
         startTime: "09:00",
         endTime: "11:00",
-        subject: "Programmation Web",
-        professor: users[1]._id,
+        professor: allUsers[31]._id,
+        location: "Lab 2",
         isRattrapage: false,
+        academicYear: academicYear._id
       },
     ]);
     console.log("Schedules created:", schedules.length);
 
+    // Create Exams
+    const exams = await Exam.insertMany([
+      {
+        title: "Examen Réseaux informatiques",
+        course: courses[0]._id,
+        class: classes[0]._id,
+        status: "scheduled",
+        date: new Date("2026-01-20"),
+        startTime: "08:00",
+        studentCount: 30,
+        duration: 120,
+        location: "Amphi A",
+        professor: allUsers[30]._id,
+        academicYear: academicYear._id
+      },
+      {
+        title: "DS Sécurité des réseaux",
+        course: courses[1]._id,
+        class: classes[0]._id,
+        status: "completed",
+        date: new Date("2025-12-15"),
+        startTime: "10:00",
+        studentCount: 30,
+        duration: 90,
+        location: "Salle B203",
+        professor: allUsers[31]._id,
+        academicYear: academicYear._id
+      }
+    ]);
+    console.log("Exams created:", exams.length);
+
     // Create notes
     const notes = await Note.insertMany([
       {
-        student: users[2]._id,
-        subject: "Réseaux informatiques",
+        student: allUsers[0]._id,
+        course: courses[0]._id,
+        exam: exams[0]._id,
+        type: "DS",
         value: 16,
-        publishedBy: users[0]._id,
+        coefficient: 1,
+        publishedBy: allUsers[30]._id,
+        academicYear: academicYear._id,
+        isPublished: true
       },
       {
-        student: users[2]._id,
-        subject: "Sécurité des réseaux",
+        student: allUsers[0]._id,
+        course: courses[1]._id,
+        exam: exams[1]._id,
+        type: "Exam",
         value: 14,
-        publishedBy: users[1]._id,
+        coefficient: 2,
+        publishedBy: allUsers[31]._id,
+        academicYear: academicYear._id,
+        isPublished: true
       },
       {
-        student: users[3]._id,
-        subject: "Réseaux informatiques",
+        student: allUsers[1]._id,
+        course: courses[0]._id,
+        type: "TP",
         value: 18,
-        publishedBy: users[0]._id,
+        coefficient: 0.5,
+        publishedBy: allUsers[30]._id,
+        academicYear: academicYear._id,
+        isPublished: true
       },
       {
-        student: users[3]._id,
-        subject: "Administration système",
+        student: allUsers[1]._id,
+        course: courses[2]._id,
+        type: "CC",
         value: 15,
-        publishedBy: users[0]._id,
+        coefficient: 1,
+        publishedBy: allUsers[30]._id,
+        academicYear: academicYear._id,
+        isPublished: true
       },
     ]);
     console.log("Notes created:", notes.length);
 
-    // Create absences
-    const absences = await Absence.insertMany([
-      {
-        student: users[2]._id,
-        date: new Date("2025-11-10"),
-        subject: "Réseaux informatiques",
-        status: "absent",
-        takenBy: users[0]._id,
-      },
-      {
-        student: users[3]._id,
-        date: new Date("2025-11-15"),
-        subject: "Sécurité des réseaux",
-        status: "present",
-        takenBy: users[1]._id,
-      },
-    ]);
+    // Create absences - 3 seances with multiple students
+    const seance1Date = new Date("2025-12-01T08:00:00");
+    const seance2Date = new Date("2025-12-03T10:30:00");
+    const seance3Date = new Date("2025-12-05T14:00:00");
+
+    // Seance 1: Réseaux informatiques - 30 students with mixed status
+    const seance1Absences = [];
+    for (let i = 0; i < 30; i++) {
+      const statuses = ["present", "absent", "late"];
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      seance1Absences.push({
+        student: allUsers[i]._id,
+        course: courses[0]._id,
+        class: classes[0]._id,
+        sessionType: "course",
+        date: seance1Date,
+        status: randomStatus,
+        takenBy: allUsers[30]._id,
+        academicYear: academicYear._id
+      });
+    }
+
+    // Seance 2: Sécurité des réseaux - 30 students with mixed status
+    const seance2Absences = [];
+    for (let i = 0; i < 30; i++) {
+      const statuses = ["present", "absent", "late"];
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      seance2Absences.push({
+        student: allUsers[i]._id,
+        course: courses[1]._id,
+        class: classes[0]._id,
+        sessionType: "course",
+        date: seance2Date,
+        status: randomStatus,
+        takenBy: allUsers[31]._id,
+        academicYear: academicYear._id
+      });
+    }
+
+    // Seance 3: Administration système - 30 students with mixed status
+    const seance3Absences = [];
+    for (let i = 0; i < 30; i++) {
+      const statuses = ["present", "absent", "late"];
+      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+      
+      seance3Absences.push({
+        student: allUsers[i]._id,
+        course: courses[2]._id,
+        class: classes[0]._id,
+        sessionType: "course",
+        date: seance3Date,
+        status: randomStatus,
+        takenBy: allUsers[30]._id,
+        academicYear: academicYear._id
+      });
+    }
+
+    const allAbsences = [...seance1Absences, ...seance2Absences, ...seance3Absences];
+    const absences = await Absence.insertMany(allAbsences);
     console.log("Absences created:", absences.length);
 
     // Create tickets
     const tickets = await Ticket.insertMany([
       {
-        student: users[2]._id,
+        student: allUsers[0]._id,
         subject: "Question sur l'examen",
         message: "Pourquoi la date de l'examen a changé ?",
         status: "answered",
         response: "L'examen a été reporté en raison d'un conflit d'horaire.",
-        answeredBy: users[4]._id,
+        answeredBy: allUsers[32]._id,
       },
       {
-        student: users[3]._id,
+        student: allUsers[1]._id,
         subject: "Problème d'accès aux ressources",
         message: "Je n'arrive pas à accéder aux documents du cours",
         status: "open",

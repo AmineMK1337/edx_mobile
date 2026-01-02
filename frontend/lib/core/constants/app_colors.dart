@@ -42,4 +42,29 @@ class AppColors {
   
   static const Color tagPersoBg = Color(0xFFF5F5F5);
   static const Color tagPersoText = Color(0xFF616161);
+  // --- Couleurs pour la page Notes ---
+  // Status "Publiée"
+  
+  // Notes page statuses
+  static const Color statusPublieeBg = Color(0xFFE8F5E9);
+  static const Color statusPublieeText = Color(0xFF2E7D32);
+  static const Color statusEnAttenteBg = Color(0xFFFFF3E0);
+  static const Color statusEnAttenteText = Color(0xFFE65100);
+  
+  // Notes page UI accents
+  static const Color gradeBoxBg = Color(0xFFE3F2FD);
+  static const Color buttonGreyBorder = Color(0xFFBDBDBD);
+
+  // --- Couleurs pour la page Absences ---
+  // Status "Saisie" (Vert)
+  static const Color statusSaisieBg = Color(0xFFE8F5E9); // Vert clair
+  static const Color statusSaisieText = Color(0xFF2E7D32); // Vert foncé
+  
+  // Status "À saisir" (Rouge)
+  static const Color statusASaisirBg = Color(0xFFFFEBEE); // Rouge clair
+  static const Color statusASaisirText = Color(0xFFC62828); // Rouge foncé
+  static const Color iconBgRed = Color(0xFFFFEBEE); // Fond pour l'icône X
+
+  // Autres
+  static const Color alertRedBg = Color(0xFFFFEBEE); // Fond de la boîte "X étudiants absents"
 }

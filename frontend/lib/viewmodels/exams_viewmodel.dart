@@ -6,6 +6,7 @@ import 'package:my_app/services/api_service.dart';
 class ExamsViewModel extends ChangeNotifier {
   List<ExamModel> exams = [];
   bool isLoading = false;
+  bool isSubmitting = false;
   String? error;
 
   ExamsViewModel() {
@@ -18,47 +19,107 @@ class ExamsViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await ApiService.get('/exams');
-      
+      final response = await ApiService.get('/exams', requiresAuth: true);
+
       if (response is List) {
-        exams = response.map((data) {
-          return ExamModel(
-            title: data['title'] ?? '',
-            subject: data['subject'] ?? '',
-            status: data['status'] == 'passe' ? ExamStatus.passe : ExamStatus.planifie,
-            date: data['date'] ?? '',
-            time: data['time'] ?? '',
-            className: data['className'] ?? '',
-            studentCount: data['studentCount'] ?? 0,
-            duration: data['duration'] ?? '',
-            location: data['location'] ?? '',
-          );
-        }).toList();
+        exams = response
+            .whereType<Map>()
+            .map((data) => ExamModel.fromJson(Map<String, dynamic>.from(data)))
+            .toList();
+      } else {
+        exams = [];
       }
-      
-      isLoading = false;
-      notifyListeners();
     } catch (e) {
       error = e.toString();
+    } finally {
       isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> addExam(ExamModel exam) async {
+    isSubmitting = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final response = await ApiService.post('/exams', exam.toJson(), requiresAuth: true);
+      ExamModel createdExam;
+
+      if (response is Map<String, dynamic>) {
+        createdExam = ExamModel.fromJson(Map<String, dynamic>.from(response));
+      } else if (response is Map) {
+        createdExam = ExamModel.fromJson(Map<String, dynamic>.from(response));
+      } else {
+        createdExam = exam;
+      }
+
+      exams.insert(0, createdExam);
+    } catch (e) {
+      error = e.toString();
+      rethrow;
+    } finally {
+      isSubmitting = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateExam(ExamModel exam) async {
+    if (exam.id == null || exam.id!.isEmpty) {
+      throw Exception('Identifiant manquant pour la mise à jour');
+    }
+
+    isSubmitting = true;
+    error = null;
+    notifyListeners();
+
+    try {
+      final response = await ApiService.put('/exams/${exam.id}', exam.toJson(), requiresAuth: true);
+      ExamModel updatedExam;
+
+      if (response is Map<String, dynamic>) {
+        updatedExam = ExamModel.fromJson(Map<String, dynamic>.from(response));
+      } else if (response is Map) {
+        updatedExam = ExamModel.fromJson(Map<String, dynamic>.from(response));
+      } else {
+        updatedExam = exam;
+      }
+
+      exams = exams.map((e) => e.id == updatedExam.id ? updatedExam : e).toList();
+    } catch (e) {
+      error = e.toString();
+      rethrow;
+    } finally {
+      isSubmitting = false;
       notifyListeners();
     }
   }
 
   // Helper to get status properties based on enum
   Map<String, dynamic> getStatusProps(ExamStatus status) {
-    if (status == ExamStatus.planifie) {
-      return {
-        "text": "Planifié",
-        "bg": AppColors.statusPlanifieBg,
-        "textColor": AppColors.statusPlanifieText,
-      };
-    } else {
-      return {
-        "text": "Passé",
-        "bg": AppColors.statusPasseBg,
-        "textColor": AppColors.statusPasseText,
-      };
+    return statusPropsFor(status);
+  }
+
+  static Map<String, dynamic> statusPropsFor(ExamStatus status) {
+    switch (status) {
+      case ExamStatus.scheduled:
+        return {
+          'text': 'Planifié',
+          'bg': AppColors.statusPlanifieBg,
+          'textColor': AppColors.statusPlanifieText,
+        };
+      case ExamStatus.completed:
+        return {
+          'text': 'Passé',
+          'bg': AppColors.statusPasseBg,
+          'textColor': AppColors.statusPasseText,
+        };
+      case ExamStatus.cancelled:
+        return {
+          'text': 'Annulé',
+          'bg': AppColors.statusPasseBg,
+          'textColor': AppColors.statusPasseText,
+        };
     }
   }
 }
