@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/document_e_viewmodel.dart';
 import '../models/document_e_model.dart';
+import '../core/constants/app_colors.dart';
 import 'demandedoc_e_view.dart';
 import 'voir_e_view.dart';
 
@@ -25,12 +26,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<DocumentViewModel>();
-    const Color activeTabColor = Color.fromARGB(255, 198, 17, 4);
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
+        elevation: 0,
         title: const Text("Documents", 
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -44,7 +45,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: viewModel.categories.map((cat) {
-                  return _buildPillTab(cat, activeTabColor, viewModel);
+                  return _buildPillTab(cat, viewModel);
                 }).toList(),
               ),
             ),
@@ -77,7 +78,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
             MaterialPageRoute(builder: (context) => const DemanderDocumentScreen())
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 183, 27, 13),
+            backgroundColor: AppColors.primaryPink,
             padding: const EdgeInsets.symmetric(vertical: 15),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
@@ -88,7 +89,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     );
   }
 
-  Widget _buildPillTab(String text, Color activeColor, DocumentViewModel vm) {
+  Widget _buildPillTab(String text, DocumentViewModel vm) {
     bool isSelected = vm.selectedCategory == text;
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
@@ -97,9 +98,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? activeColor : Colors.white,
+            color: isSelected ? AppColors.primaryPink : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: isSelected ? activeColor : Colors.grey.shade300),
+            border: Border.all(color: isSelected ? AppColors.primaryPink : Colors.grey.shade300),
           ),
           child: Text(
             text,
@@ -114,8 +115,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   }
 
   Widget _buildDocumentCard(SchoolDocument doc, DocumentViewModel vm, BuildContext context) {
-    const Color categoryColor = Color.fromARGB(255, 41, 166, 249);
-    
     return GestureDetector(
       onTap: () {
         // NAVIGATION VERS LA PAGE DE DÉTAIL
@@ -131,18 +130,18 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1), 
-              blurRadius: 3, 
+              color: Colors.black.withOpacity(0.05), 
+              blurRadius: 8, 
               offset: const Offset(0, 2)
             )
           ],
         ),
         child: Row(
           children: [
-            Icon(vm.getIconForCategory(doc.category), color: categoryColor, size: 28),
+            Icon(vm.getIconForCategory(doc.category), color: AppColors.primaryPink, size: 28),
             const SizedBox(width: 15),
             Expanded(
               child: Column(
@@ -159,13 +158,13 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: categoryColor.withOpacity(0.1), 
+                          color: AppColors.primaryPink.withOpacity(0.1), 
                           borderRadius: BorderRadius.circular(5)
                         ),
                         child: Text(doc.category, 
                             style: const TextStyle(
                               fontSize: 10, 
-                              color: categoryColor, 
+                              color: AppColors.primaryPink, 
                               fontWeight: FontWeight.bold
                             )),
                       ),

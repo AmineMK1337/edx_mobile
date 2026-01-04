@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/document_e_model.dart';
 import '../viewmodels/voir_document_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 class VoirDocumentPage extends StatelessWidget {
   final SchoolDocument document;
@@ -18,9 +19,11 @@ class VoirDocumentPage extends StatelessWidget {
       child: Consumer<VoirDocumentViewModel>(
         builder: (context, viewModel, child) {
           return Scaffold(
+            backgroundColor: AppColors.backgroundMint,
             appBar: AppBar(
               title: Text(document.title, style: const TextStyle(color: Colors.white)),
-              backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+              backgroundColor: AppColors.primaryPink,
+              elevation: 0,
               iconTheme: const IconThemeData(color: Colors.white),
             ),
             body: Column(
@@ -85,7 +88,7 @@ class VoirDocumentPage extends StatelessWidget {
                   padding: const EdgeInsets.all(18),
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
+                      backgroundColor: AppColors.primaryPink,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

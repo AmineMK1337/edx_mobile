@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 // Import du ViewModel
 import '../viewmodels/student_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 // Imports des vues
 import 'emploi_e_view.dart';
@@ -39,9 +40,9 @@ class _StudentHomeState extends State<StudentHome> {
     final student = viewModel.student;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
         title: Row(
           children: [
@@ -56,17 +57,17 @@ class _StudentHomeState extends State<StudentHome> {
                   );
                 },
                 borderRadius: BorderRadius.circular(25),
-                splashColor: Colors.blue.withOpacity(0.2),
-                highlightColor: Colors.blue.withOpacity(0.1),
+                splashColor: AppColors.primaryPink.withOpacity(0.2),
+                highlightColor: AppColors.primaryPink.withOpacity(0.1),
                 child: Container(
                   padding: const EdgeInsets.all(2), // Espace pour l'effet de clic
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.blue.shade100, width: 1),
+                    border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                   ),
                   child: CircleAvatar(
                     radius: 20,
-                    backgroundColor: Colors.grey.shade200,
+                    backgroundColor: Colors.white,
                     backgroundImage: (student?.photoUrl != null)
                         ? NetworkImage(student!.photoUrl!)
                         : const AssetImage('assets/user.jpg') as ImageProvider,
@@ -78,25 +79,25 @@ class _StudentHomeState extends State<StudentHome> {
             
             // --- NOM ET PRÉNOM ---
             viewModel.isLoading
-                ? const Text("Chargement...", style: TextStyle(color: Colors.black, fontSize: 12))
+                ? const Text("Chargement...", style: TextStyle(color: Colors.white, fontSize: 12))
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "${student?.firstName ?? ''} ${student?.lastName ?? ''}",
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                       if (student?.studentClass != null)
                         Text(
                           student!.studentClass!,
-                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                          style: const TextStyle(fontSize: 10, color: Colors.white70),
                         ),
                     ],
                   ),
             
             const Spacer(),
             IconButton(
-              icon: const Icon(Icons.logout, size: 20, color: Colors.black),
+              icon: const Icon(Icons.logout, size: 20, color: Colors.white),
               onPressed: () {
                 // Action de déconnexion
               },
@@ -121,11 +122,12 @@ class _StudentHomeState extends State<StudentHome> {
 
             const SizedBox(height: 15),
             const Text(
-              "MENU PRINCIPAL",
+              "ESPACE ÉTUDIANT",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Colors.teal,
+                letterSpacing: 1.0,
               ),
             ),
             const SizedBox(height: 10),
@@ -187,13 +189,20 @@ class _StudentHomeState extends State<StudentHome> {
       borderRadius: BorderRadius.circular(16),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.blue.shade50, // Teinte bleue claire cohérente
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.blue, size: 30),
+            Icon(icon, color: AppColors.primaryPink, size: 30),
             const SizedBox(height: 8),
             Text(
               title,

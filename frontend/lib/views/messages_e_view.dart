@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/messages_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 import 'nmessage_e_view.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -25,10 +26,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
     final viewModel = context.watch<MessagesViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
         title: const Text(
           "Messages",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -78,7 +79,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       height: 48,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 3, 126, 214),
+          backgroundColor: AppColors.primaryPink,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         ),
         onPressed: () {
@@ -113,16 +114,26 @@ class _MessagesScreenState extends State<MessagesScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: const Color(0xfff6f4ff),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 24,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person, color: Colors.grey, size: 28),
+            backgroundColor: AppColors.primaryPink,
+            child: Text(
+              sender.isNotEmpty ? sender[0].toUpperCase() : '?',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -148,8 +159,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
               if (unread > 0)
                 Container(
                   margin: const EdgeInsets.only(top: 8),
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(color: Color.fromARGB(255, 239, 76, 6), shape: BoxShape.circle),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPink,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Text(
                     unread.toString(),
                     style: const TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold),

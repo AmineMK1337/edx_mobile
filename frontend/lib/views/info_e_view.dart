@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/info_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 class NoteInfoScreen extends StatefulWidget {
   const NoteInfoScreen({super.key});
@@ -24,9 +25,9 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
     final viewModel = context.watch<InfoViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
         title: const Text(
           "Note d'info",
@@ -46,7 +47,7 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
                   children: [
                     const Text(
                       "Informations importantes",
-                      style: TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.w600),
+                      style: TextStyle(fontSize: 14, color: Colors.teal, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 15),
                     
@@ -62,7 +63,7 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
                           description: note.description,
                           date: note.date,
                           category: note.category,
-                          categoryColor: Colors.blue,
+                          categoryColor: AppColors.primaryPink,
                         )),
                   ],
                 ),
@@ -84,13 +85,12 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -99,7 +99,7 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
         children: [
           Row(
             children: [
-              Icon(icon, color: const Color.fromARGB(255, 205, 24, 15), size: 24),
+              Icon(icon, color: AppColors.primaryPink, size: 24),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),

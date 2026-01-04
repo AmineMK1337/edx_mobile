@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/group_e_viewmodel.dart';
 import '../models/group_member_e_model.dart';
+import '../core/constants/app_colors.dart';
 
 class GroupScreen extends StatefulWidget {
   const GroupScreen({super.key});
@@ -25,10 +26,10 @@ class _GroupScreenState extends State<GroupScreen> {
     final viewModel = context.watch<GroupViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
         title: const Text(
           "Mon Groupe",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
@@ -66,8 +67,8 @@ class _GroupScreenState extends State<GroupScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        gradient: const LinearGradient(
-          colors: [Color.fromARGB(255, 64, 195, 255), Color.fromARGB(255, 82, 206, 255)],
+        gradient: LinearGradient(
+          colors: [AppColors.primaryPink, AppColors.primaryPink.withOpacity(0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -99,15 +100,25 @@ class _GroupScreenState extends State<GroupScreen> {
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: const Color(0xfff6f4ff),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 25,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person, color: Colors.grey, size: 30),
+            backgroundColor: AppColors.primaryPink,
+            child: Text(
+              member.name.isNotEmpty ? member.name[0].toUpperCase() : '?',
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -125,13 +136,13 @@ class _GroupScreenState extends State<GroupScreen> {
                         margin: const EdgeInsets.only(left: 6),
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 179, 204, 221),
+                          color: AppColors.primaryPink.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           member.role,
                           style: const TextStyle(
-                            color: Color.fromARGB(255, 39, 76, 176),
+                            color: AppColors.primaryPink,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),

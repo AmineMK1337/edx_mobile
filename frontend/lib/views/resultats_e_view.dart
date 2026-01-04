@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/resultats_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 class ResultatsScreen extends StatefulWidget {
   const ResultatsScreen({super.key});
@@ -21,12 +22,11 @@ class _ResultatsScreenState extends State<ResultatsScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ResultatsViewModel>();
-    const Color primaryColor = Colors.blue;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
         title: const Text(
           "Résultats",
@@ -44,7 +44,6 @@ class _ResultatsScreenState extends State<ResultatsScreen> {
                   _buildGeneralAverageCard(
                     average: viewModel.generalAverage.toStringAsFixed(2),
                     semester: "Semestre 1 - 2024/2025",
-                    color: primaryColor,
                   ),
                   const SizedBox(height: 20),
                   if (viewModel.resultsList.isEmpty)
@@ -64,13 +63,13 @@ class _ResultatsScreenState extends State<ResultatsScreen> {
     );
   }
 
-  Widget _buildGeneralAverageCard({required String average, required String semester, required Color color}) {
+  Widget _buildGeneralAverageCard({required String average, required String semester}) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
+        color: AppColors.primaryPink,
+        borderRadius: BorderRadius.circular(15),
       ),
       child: Column(
         children: [
@@ -95,7 +94,17 @@ class _ResultatsScreenState extends State<ResultatsScreen> {
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Container(
         padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+          color: Colors.white, 
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,7 +121,7 @@ class _ResultatsScreenState extends State<ResultatsScreen> {
               children: [
                 _buildMarkDetail("CC", cc, Colors.black87),
                 _buildMarkDetail("Examen", exam, Colors.black87),
-                _buildMarkDetail("Moyenne", moduleAverage, Colors.blue),
+                _buildMarkDetail("Moyenne", moduleAverage, AppColors.primaryPink),
               ],
             ),
             const SizedBox(height: 15),
