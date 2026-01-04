@@ -113,7 +113,7 @@ class _StudentHomeState extends State<StudentHome> {
               height: 160,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/supcom.jpeg"),
+                  image: AssetImage("assets/supcom.png"),
                   fit: BoxFit.cover,
                 ),
               ),
