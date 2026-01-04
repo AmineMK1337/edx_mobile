@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../viewmodels/partage_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 import 'partager_e_view.dart';
 
 class PartageDocumentsPage extends StatefulWidget {
@@ -36,10 +37,10 @@ class _PartageDocumentsPageState extends State<PartageDocumentsPage> {
     final viewModel = context.watch<PartageViewModel>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
         title: const Text("Partage Documents",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
         actions: [
@@ -118,8 +119,8 @@ class _PartageDocumentsPageState extends State<PartageDocumentsPage> {
           );
           if (result == true) vm.fetchDocuments();
         },
-        icon: const Icon(Icons.add, color: Colors.blue),
-        label: const Text("Partager un document", style: TextStyle(color: Colors.blue)),
+        icon: const Icon(Icons.add, color: AppColors.primaryPink),
+        label: const Text("Partager un document", style: TextStyle(color: AppColors.primaryPink)),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           minimumSize: const Size(200, 45),
@@ -168,14 +169,24 @@ class _PartageDocumentsPageState extends State<PartageDocumentsPage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      decoration: BoxDecoration(
+        color: Colors.white, 
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: const Color(0xFFE4E1FF), borderRadius: BorderRadius.circular(10)),
-            child: Text(doc.tag, style: const TextStyle(fontWeight: FontWeight.bold)),
+            decoration: BoxDecoration(color: AppColors.primaryPink.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            child: Text(doc.tag, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primaryPink)),
           ),
           const SizedBox(height: 8),
           Text(doc.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -193,10 +204,10 @@ class _PartageDocumentsPageState extends State<PartageDocumentsPage> {
                 Text(" ${doc.note}"),
               ]),
               Row(children: [
-                TextButton(onPressed: () => doc.fileUrl != null ? _launchURL(doc.fileUrl!) : null, child: const Text("Voir")),
+                TextButton(onPressed: () => doc.fileUrl != null ? _launchURL(doc.fileUrl!) : null, child: const Text("Voir", style: TextStyle(color: AppColors.primaryPink))),
                 ElevatedButton(
                   onPressed: () => doc.fileUrl != null ? _launchURL(doc.fileUrl!) : null,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                   child: const Text("Télécharger", style: TextStyle(color: Colors.white)),
                 )
               ])

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/absence_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 class AbsencesScreen extends StatefulWidget {
   const AbsencesScreen({super.key});
@@ -23,11 +24,12 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
     final viewModel = context.watch<AbsenceViewModel>();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
         title: const Text("Absences", 
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
+        elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: viewModel.isLoading
@@ -70,20 +72,20 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5, offset: const Offset(0, 3))],
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text("Récapitulatif", 
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(197, 183, 4, 4))),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primaryPink)),
           const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatItem('Total absences', vm.totalAbsences.toString(), Colors.blue),
-              _buildStatItem('Non justifiées', vm.unjustifiedCount.toString(), const Color.fromARGB(194, 230, 20, 5)),
+              _buildStatItem('Total absences', vm.totalAbsences.toString(), Colors.teal),
+              _buildStatItem('Non justifiées', vm.unjustifiedCount.toString(), Colors.redAccent),
             ],
           ),
         ],
@@ -107,8 +109,8 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 5, offset: const Offset(0, 3))],
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,7 +127,7 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
               child: Text(
                 absenceType,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, 
-                  color: justified ? const Color.fromARGB(255, 15, 100, 219) : Colors.red.shade800),
+                  color: justified ? Colors.green.shade800 : Colors.red.shade800),
               ),
             ),
           ),
@@ -138,19 +140,19 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.pink.shade50,
+        color: AppColors.alertRedBg,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color.fromARGB(255, 231, 47, 6)),
+        border: Border.all(color: Colors.red.shade300),
       ),
       child: Row(
         children: [
-          const Icon(Icons.warning, color: Color.fromARGB(255, 204, 38, 4), size: 24),
+          const Icon(Icons.warning, color: Colors.redAccent, size: 24),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Color.fromARGB(255, 188, 46, 6))),
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent)),
                 Text(message, style: const TextStyle(fontSize: 13, color: Colors.black87)),
               ],
             ),

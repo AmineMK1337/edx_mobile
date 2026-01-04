@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/emploi_e_viewmodel.dart';
 import '../models/course_e_model.dart';
+import '../core/constants/app_colors.dart';
 
 class EmploiScreen extends StatefulWidget {
   const EmploiScreen({super.key});
@@ -24,9 +25,9 @@ class _EmploiScreenState extends State<EmploiScreen> {
     final viewModel = context.watch<EmploiViewModel>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F2FF),
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 64, 179, 255),
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
         title: const Text(
           "Emploi du temps",
@@ -88,9 +89,9 @@ class _EmploiScreenState extends State<EmploiScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2))
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))
         ],
       ),
       child: Column(
@@ -110,12 +111,12 @@ class _EmploiScreenState extends State<EmploiScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.blue[100],
+                  color: AppColors.primaryPink.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   course.type,
-                  style: TextStyle(color: Colors.blue[800], fontSize: 12),
+                  style: const TextStyle(color: AppColors.primaryPink, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ),
             ],

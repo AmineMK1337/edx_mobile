@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/doc_request_e_model.dart';
 import '../viewmodels/demandedoc_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 class DemanderDocumentScreen extends StatefulWidget {
   const DemanderDocumentScreen({super.key});
@@ -48,17 +49,15 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryBlue = Color.fromARGB(255, 64, 179, 255);
-    const Color primaryRed = Color.fromARGB(255, 183, 27, 13);
-
     return ChangeNotifierProvider(
       create: (_) => DemandeDocViewModel(),
       child: Consumer<DemandeDocViewModel>(
         builder: (context, vm, _) {
           return Scaffold(
-            backgroundColor: Colors.grey[100],
+            backgroundColor: AppColors.backgroundMint,
             appBar: AppBar(
-              backgroundColor: primaryBlue,
+              backgroundColor: AppColors.primaryPink,
+              elevation: 0,
               title: const Text("Demander un Document", 
                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               iconTheme: const IconThemeData(color: Colors.white),
@@ -70,17 +69,17 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
                 children: [
                   const Text("Type de document", style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  _buildDropdownField(vm, primaryBlue),
+                  _buildDropdownField(vm),
                   const SizedBox(height: 20),
                   
                   const Text("Raison (optionnel)", style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  _buildInputField(_raisonController, "Ex: Inscription master...", 2, primaryBlue),
+                  _buildInputField(_raisonController, "Ex: Inscription master...", 2),
                   const SizedBox(height: 20),
                   
                   const Text("Détails supplémentaires", style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  _buildInputField(_detailsController, "Spécifiez si besoin...", 4, primaryBlue),
+                  _buildInputField(_detailsController, "Spécifiez si besoin...", 4),
                   const SizedBox(height: 30),
 
                   SizedBox(
@@ -89,7 +88,7 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
                     child: ElevatedButton(
                       onPressed: vm.isSubmitting ? null : () => _handleSubmission(vm),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryRed,
+                        backgroundColor: AppColors.primaryPink,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       ),
                       child: vm.isSubmitting
@@ -107,7 +106,7 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
     );
   }
 
-  Widget _buildDropdownField(DemandeDocViewModel vm, Color primaryColor) {
+  Widget _buildDropdownField(DemandeDocViewModel vm) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
@@ -119,7 +118,7 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
         child: DropdownButton<String>(
           isExpanded: true,
           value: _selectedType ?? vm.documentTypes[0],
-          icon: Icon(Icons.arrow_drop_down, color: primaryColor),
+          icon: const Icon(Icons.arrow_drop_down, color: AppColors.primaryPink),
           items: vm.documentTypes.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
           onChanged: (val) => setState(() => _selectedType = val),
         ),
@@ -127,7 +126,7 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
     );
   }
 
-  Widget _buildInputField(TextEditingController ctrl, String hint, int lines, Color color) {
+  Widget _buildInputField(TextEditingController ctrl, String hint, int lines) {
     return TextField(
       controller: ctrl,
       maxLines: lines,
@@ -136,7 +135,7 @@ class _DemanderDocumentScreenState extends State<DemanderDocumentScreen> {
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: Colors.grey.shade300)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: color, width: 2)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: AppColors.primaryPink, width: 2)),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/nmessage_e_viewmodel.dart';
 import '../models/message_request_e_model.dart';
+import '../core/constants/app_colors.dart';
 
 class NouveauMessageScreen extends StatefulWidget {
   const NouveauMessageScreen({super.key});
@@ -50,12 +51,11 @@ class _NouveauMessageScreenState extends State<NouveauMessageScreen> {
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<NMessageViewModel>();
-    const Color primaryColor = Colors.blue;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        backgroundColor: primaryColor,
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
         title: const Text("Nouveau Message", 
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -76,14 +76,13 @@ class _NouveauMessageScreenState extends State<NouveauMessageScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildRoleSelector(viewModel, primaryColor),
+            _buildRoleSelector(viewModel),
             const SizedBox(height: 15),
             _buildInputField(
               controller: _objetController,
               labelText: "Objet",
               hintText: "Sujet du message",
               icon: Icons.subject,
-              primaryColor: primaryColor,
             ),
             const SizedBox(height: 15),
             _buildMessageBodyField(_messageController),
@@ -93,7 +92,7 @@ class _NouveauMessageScreenState extends State<NouveauMessageScreen> {
     );
   }
 
-  Widget _buildRoleSelector(NMessageViewModel vm, Color primaryColor) {
+  Widget _buildRoleSelector(NMessageViewModel vm) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -103,7 +102,7 @@ class _NouveauMessageScreenState extends State<NouveauMessageScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.person_outline, color: primaryColor),
+          const Icon(Icons.person_outline, color: AppColors.primaryPink),
           const SizedBox(width: 10),
           DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -111,7 +110,7 @@ class _NouveauMessageScreenState extends State<NouveauMessageScreen> {
               items: vm.roles.map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value, style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold)),
+                  child: Text(value, style: const TextStyle(color: AppColors.primaryPink, fontWeight: FontWeight.bold)),
                 );
               }).toList(),
               onChanged: (val) => vm.setSelectedRole(val),
@@ -137,17 +136,20 @@ class _NouveauMessageScreenState extends State<NouveauMessageScreen> {
     required String labelText,
     required String hintText,
     required IconData icon,
-    required Color primaryColor,
   }) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
-        prefixIcon: Icon(icon, color: primaryColor),
+        prefixIcon: Icon(icon, color: AppColors.primaryPink),
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.primaryPink, width: 2),
+        ),
       ),
     );
   }

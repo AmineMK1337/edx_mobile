@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/profile_e_viewmodel.dart';
 import '../viewmodels/student_e_viewmodel.dart';
+import '../core/constants/app_colors.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -27,12 +28,12 @@ class _ProfileViewState extends State<ProfileView> {
     final studentBase = context.watch<StudentViewModel>().student;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundMint,
       appBar: AppBar(
-        title: const Text("Mon Profil", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
+        title: const Text("Mon Profil", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: AppColors.primaryPink,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.blue),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: profileVM.isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -64,12 +65,19 @@ class _ProfileViewState extends State<ProfileView> {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.blue),
+          Icon(icon, color: AppColors.primaryPink),
           const SizedBox(width: 15),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
