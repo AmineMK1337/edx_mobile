@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
 import '../viewmodels/login_viewmodel.dart';
 import 'home_view.dart';
+import 'student_e_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -33,9 +34,17 @@ class _LoginViewState extends State<LoginView> {
       );
 
       if (success && mounted) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const HomeView()),
-        );
+        // Check user role and navigate accordingly
+        final userRole = viewModel.user?['role'];
+        if (userRole == 'etudiant' || userRole == 'student') {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const StudentHome()),
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeView()),
+          );
+        }
       }
     }
   }
