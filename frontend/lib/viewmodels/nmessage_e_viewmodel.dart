@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../models/message_request_e_model.dart';
+import '../services/api_service.dart';
 
 class NMessageViewModel extends ChangeNotifier {
   String? _selectedRole = 'Professeur';
@@ -23,16 +22,13 @@ class NMessageViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      const String serverIP = "192.168.100.17";
-      final baseUrl = kIsWeb ? 'http://localhost:5000' : 'http://$serverIP:5000';
-      
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/messagees/envoyer'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(request.toJson()),
-      );
+      final response = await ApiService.post('/messages', {
+        'role': request.role,
+        'specificName': request.specificName,
+        'content': request.content,
+      }, requiresAuth: true);
 
-      return response.statusCode == 201;
+      return response != null;
     } catch (e) {
       debugPrint("Erreur NMessageViewModel : $e");
       return false;

@@ -1,6 +1,20 @@
 const Document = require("../models/document");
 const Course = require("../models/course");
 
+// Get all documents
+exports.getDocuments = async (req, res) => {
+  try {
+    const documents = await Document.find({ isPublished: true })
+      .populate("uploadedBy", "name email")
+      .populate("course", "title code")
+      .sort({ createdAt: -1 });
+
+    res.json(documents);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Get all documents for a course
 exports.getDocumentsByCourse = async (req, res) => {
   try {
@@ -50,7 +64,7 @@ exports.createDocument = async (req, res) => {
       course: courseId,
       fileUrl,
       fileType: fileType || "pdf",
-      uploadedBy: req.user?.id,
+      uploadedBy: req.userId,
       isPublished: true
     });
 

@@ -1,11 +1,13 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../models/doc_request_e_model.dart';
+import '../services/api_service.dart';
 
 class DemandeDocViewModel extends ChangeNotifier {
   bool _isSubmitting = false;
   bool get isSubmitting => _isSubmitting;
+
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
 
   final List<String> documentTypes = [
     'Attestation de Scolarité',
@@ -14,32 +16,27 @@ class DemandeDocViewModel extends ChangeNotifier {
     'Autre'
   ];
 
-  String getBaseUrl() {
-    const String serverIP = "192.168.100.17";
-    const String port = "5000";
-    if (kIsWeb) return 'http://localhost:$port';
-    return 'http://$serverIP:$port';
-  }
-
   Future<bool> submitRequest(DocRequest request) async {
     _isSubmitting = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
-      final url = Uri.parse('${getBaseUrl()}/api/doc-requests/send');
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(request.toJson()),
+      final response = await ApiService.post(
+        '/doc-requests/send',
+        request.toJson(),
+        requiresAuth: false, // Document request submission doesn't require auth
       );
 
-      return response.statusCode == 201;
-    } catch (e) {
-      debugPrint("Erreur soumission: $e");
-      return false;
-    } finally {
       _isSubmitting = false;
       notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = "Erreur soumission: $e";
+      debugPrint(_errorMessage);
+      _isSubmitting = false;
+      notifyListeners();
+      return false;
     }
   }
 }

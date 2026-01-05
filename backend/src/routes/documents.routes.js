@@ -4,6 +4,9 @@ const documentsController = require("../controllers/documents.controller");
 
 const router = express.Router();
 
+// Get all documents
+router.get("/", authenticate, documentsController.getDocuments);
+
 // Get all documents for a course
 router.get("/course/:courseId", authenticate, documentsController.getDocumentsByCourse);
 

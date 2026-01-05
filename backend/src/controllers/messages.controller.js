@@ -4,7 +4,7 @@ const User = require("../models/user");
 // Get all conversations for the current user
 exports.getConversations = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
 
     // Get all conversations where user is either sender or recipient
     const conversations = await Message.aggregate([
@@ -80,7 +80,7 @@ exports.getConversations = async (req, res) => {
 exports.getConversation = async (req, res) => {
   try {
     const { recipientId } = req.params;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     // Validate ObjectId
     if (!recipientId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -112,15 +112,47 @@ exports.getConversation = async (req, res) => {
 // Send a message
 exports.sendMessage = async (req, res) => {
   try {
-    const { recipientId, content, courseId } = req.body;
-    const userId = req.user.id;
+    let { recipientId, content, courseId, role, specificName } = req.body;
+    const userId = req.userId;
 
-    if (!recipientId || !content) {
-      return res.status(400).json({ error: "Missing required fields" });
+    if (!content) {
+      return res.status(400).json({ error: "Content is required" });
+    }
+
+    // If recipientId is not provided, try to find user by role and name
+    if (!recipientId) {
+      if (!role) {
+        return res.status(400).json({ error: "recipientId or role is required" });
+      }
+
+      // Map French role names to database roles
+      const roleMap = {
+        'Professeur': 'professor',
+        'Administrateur': 'admin',
+        'Student': 'student',
+        'professor': 'professor',
+        'admin': 'admin',
+        'student': 'student'
+      };
+
+      const dbRole = roleMap[role] || role.toLowerCase();
+
+      // Find a user with the specified role
+      let query = { role: dbRole };
+      if (specificName && specificName.trim()) {
+        query.name = { $regex: specificName, $options: "i" };
+      }
+
+      const recipient = await User.findOne(query).select("_id");
+      if (!recipient) {
+        return res.status(404).json({ error: `No ${role} found` });
+      }
+
+      recipientId = recipient._id;
     }
 
     // Don't allow sending message to self
-    if (userId === recipientId) {
+    if (userId.toString() === recipientId.toString()) {
       return res.status(400).json({ error: "Cannot send message to yourself" });
     }
 
@@ -164,7 +196,7 @@ exports.getMessage = async (req, res) => {
 exports.deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     const message = await Message.findById(id);
 

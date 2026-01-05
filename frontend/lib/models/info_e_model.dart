@@ -17,9 +17,22 @@ class InfoNote {
     return InfoNote(
       id: json['_id'] ?? '',
       title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      date: json['date'] ?? '',
-      category: json['category'] ?? 'Général',
+      description: json['content'] ?? json['description'] ?? '',
+      date: json['createdAt'] != null ? json['createdAt'].toString().split('T')[0] : '',
+      category: json['priority'] != null ? _mapPriority(json['priority']) : 'Général',
     );
+  }
+
+  static String _mapPriority(String priority) {
+    switch (priority) {
+      case 'high':
+        return 'Important';
+      case 'medium':
+        return 'Général';
+      case 'low':
+        return 'Info';
+      default:
+        return 'Général';
+    }
   }
 }

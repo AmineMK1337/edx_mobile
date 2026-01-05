@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/message_e_model.dart';
+import '../services/api_service.dart';
 
 class MessagesViewModel extends ChangeNotifier {
   List<AppMessage> _messagesList = [];
@@ -10,21 +9,21 @@ class MessagesViewModel extends ChangeNotifier {
   List<AppMessage> get messagesList => _messagesList;
   bool get isLoading => _isLoading;
 
-  String get _baseUrl => kIsWeb ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
-
   Future<void> fetchMessages() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/api/messages'));
+      final response = await ApiService.get('/messages/conversations', requiresAuth: true);
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _messagesList = data.map((json) => AppMessage.fromJson(json)).toList();
-      } else {
-        debugPrint("Erreur serveur : ${response.statusCode}");
+      List<dynamic> data = [];
+      if (response is List) {
+        data = response;
+      } else if (response is Map && response.containsKey('data')) {
+        data = response['data'];
       }
+      
+      _messagesList = data.map((json) => AppMessage.fromJson(json)).toList();
     } catch (e) {
       debugPrint("Erreur MessagesViewModel : $e");
     } finally {

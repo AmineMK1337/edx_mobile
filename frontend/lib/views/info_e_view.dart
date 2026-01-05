@@ -54,7 +54,7 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
                     if (viewModel.notes.isEmpty)
                       const Center(child: Padding(
                         padding: EdgeInsets.only(top: 50),
-                        child: Text("Aucune information disponible."),
+                        child: Text("Aucune information disponible.", style: TextStyle(color: Colors.black87, fontSize: 16)),
                       )),
 
                     ...viewModel.notes.map((note) => _buildInfoCard(
@@ -102,7 +102,7 @@ class _NoteInfoScreenState extends State<NoteInfoScreen> {
               Icon(icon, color: AppColors.primaryPink, size: 24),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
               ),
             ],
           ),

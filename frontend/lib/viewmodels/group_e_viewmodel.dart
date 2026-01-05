@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/group_member_e_model.dart';
+import '../services/api_service.dart';
 
 class GroupViewModel extends ChangeNotifier {
   List<GroupMember> _groupList = [];
@@ -10,19 +9,21 @@ class GroupViewModel extends ChangeNotifier {
   List<GroupMember> get groupList => _groupList;
   bool get isLoading => _isLoading;
 
-  String get _baseUrl => kIsWeb ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
-
   Future<void> fetchGroup() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/api/groups'));
+      final response = await ApiService.get('/classes', requiresAuth: true);
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _groupList = data.map((json) => GroupMember.fromJson(json)).toList();
+      List<dynamic> data = [];
+      if (response is List) {
+        data = response;
+      } else if (response is Map && response.containsKey('data')) {
+        data = response['data'];
       }
+      
+      _groupList = data.map((json) => GroupMember.fromJson(json)).toList();
     } catch (e) {
       debugPrint("Erreur GroupViewModel : $e");
     } finally {

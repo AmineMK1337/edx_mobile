@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import '../models/upload_request_e_model.dart';
+import '../services/api_service.dart';
 
 class PartagerViewModel extends ChangeNotifier {
   bool _isSubmitting = false;
@@ -38,12 +39,28 @@ class PartagerViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      const String serverIP = "192.168.100.17";
-      final baseUrl = kIsWeb ? 'http://localhost:5000' : 'http://$serverIP:5000';
+      final baseUrl = ApiService.baseUrl.replaceAll('/api', '');
+      final token = ApiService.getToken();
+      
+      debugPrint("Upload baseUrl: $baseUrl");
+      debugPrint("Token available: ${token != null}");
+      debugPrint("Title: ${data.title}");
       
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/api/shared-docs'));
-      request.fields.addAll(data.toFields());
+      
+      // Add authorization header
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+      
+      // Add form fields
+      request.fields['title'] = data.title;
+      request.fields['subject'] = data.subject;
+      request.fields['tag'] = data.tag;
+      request.fields['description'] = data.description;
+      request.fields['teacher'] = data.teacher;
 
+      // Add file
       var file = _pickerResult!.files.single;
       if (kIsWeb) {
         request.files.add(http.MultipartFile.fromBytes('pdfFile', file.bytes!, filename: file.name));
@@ -52,7 +69,17 @@ class PartagerViewModel extends ChangeNotifier {
       }
 
       var response = await request.send();
-      return response.statusCode == 201;
+      final responseBody = await response.stream.bytesToString();
+      
+      debugPrint("Upload response status: ${response.statusCode}");
+      debugPrint("Upload response body: $responseBody");
+      
+      if (response.statusCode != 201) {
+        debugPrint("Erreur upload: Status ${response.statusCode}");
+        return false;
+      }
+      
+      return true;
     } catch (e) {
       debugPrint("Erreur upload: $e");
       return false;

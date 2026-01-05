@@ -47,7 +47,7 @@ exports.markAttendance = async (req, res) => {
         sessionType: sessionType || "course",
         date: new Date(date || Date.now()),
         status: student.status || "absent",
-        takenBy: req.user?.id || null,
+        takenBy: req.userId || null,
         academicYear: currentAcademicYear._id
       });
 

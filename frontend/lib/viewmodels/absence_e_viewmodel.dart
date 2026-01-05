@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/absence_e_model.dart';
+import '../services/api_service.dart';
 
 class AbsenceViewModel extends ChangeNotifier {
   List<Absence> _absencesList = [];
@@ -14,18 +13,21 @@ class AbsenceViewModel extends ChangeNotifier {
   int get totalAbsences => _absencesList.length;
   int get unjustifiedCount => _absencesList.where((a) => !a.isJustified).length;
 
-  String get _baseUrl => kIsWeb ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
-
   Future<void> fetchAbsences() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/api/absences'));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _absencesList = data.map((json) => Absence.fromJson(json)).toList();
+      final response = await ApiService.get('/absences', requiresAuth: true);
+      
+      List<dynamic> data = [];
+      if (response is List) {
+        data = response;
+      } else if (response is Map && response.containsKey('data')) {
+        data = response['data'];
       }
+      
+      _absencesList = data.map((json) => Absence.fromJson(json)).toList();
     } catch (e) {
       debugPrint("Erreur AbsenceViewModel : $e");
     } finally {

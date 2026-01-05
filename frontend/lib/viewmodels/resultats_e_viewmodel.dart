@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/result_e_model.dart';
+import '../services/api_service.dart';
 
 class ResultatsViewModel extends ChangeNotifier {
   List<ResultModel> _resultsList = [];
@@ -13,20 +12,22 @@ class ResultatsViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   double get generalAverage => _generalAverage;
 
-  String get _baseUrl => kIsWeb ? 'http://localhost:5000' : 'http://10.0.2.2:5000';
-
   Future<void> fetchResults() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/api/results'));
+      final response = await ApiService.get('/notes', requiresAuth: true);
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _resultsList = data.map((json) => ResultModel.fromJson(json)).toList();
-        _calculateGeneralAverage();
+      List<dynamic> data = [];
+      if (response is List) {
+        data = response;
+      } else if (response is Map && response.containsKey('data')) {
+        data = response['data'];
       }
+      
+      _resultsList = data.map((json) => ResultModel.fromJson(json)).toList();
+      _calculateGeneralAverage();
     } catch (e) {
       debugPrint("Erreur ResultatsViewModel: $e");
     } finally {

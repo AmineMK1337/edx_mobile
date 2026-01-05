@@ -1,7 +1,6 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../models/shared_doc_e_model.dart';
+import '../services/api_service.dart';
 
 class PartageViewModel extends ChangeNotifier {
   List<SharedDocModel> _documents = [];
@@ -13,21 +12,21 @@ class PartageViewModel extends ChangeNotifier {
   List<SharedDocModel> get documents => _documents;
   bool get isLoading => _isLoading;
 
-  final String serverIP = "192.168.100.17";
-  final String port = "5000";
-
-  String get _baseUrl => kIsWeb ? 'http://localhost:$port' : 'http://$serverIP:$port';
-
   Future<void> fetchDocuments() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/api/shared-docs'));
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        _documents = data.map((json) => SharedDocModel.fromJson(json)).toList();
+      final response = await ApiService.get('/shared-docs', requiresAuth: true);
+      
+      List<dynamic> data = [];
+      if (response is List) {
+        data = response;
+      } else if (response is Map && response.containsKey('data')) {
+        data = response['data'];
       }
+      
+      _documents = data.map((json) => SharedDocModel.fromJson(json)).toList();
     } catch (e) {
       debugPrint("Erreur PartageViewModel: $e");
     } finally {

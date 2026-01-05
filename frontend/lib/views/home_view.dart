@@ -104,12 +104,13 @@ class HomeView extends StatelessWidget {
       alignment: Alignment.topCenter,
       children: [
         // Background Container for Image/Color
+        
         Column(
           children: [
             // Pink Top Bar
             Container(
               padding: const EdgeInsets.only(top: 40, left: 20, right: 20, bottom: 15),
-              color: AppColors.primaryPink,
+              color: const Color.fromARGB(200, 127, 142, 230),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -118,7 +119,7 @@ class HomeView extends StatelessWidget {
                       const CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 22,
-                        child: Icon(Icons.school, color: AppColors.primaryPink),
+                        child: Icon(Icons.school, color: const Color.fromARGB(199, 45, 66, 187)),
                       ),
                       const SizedBox(width: 12),
                       Column(
@@ -152,7 +153,7 @@ class HomeView extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80'), 
+                  image: AssetImage("assets/supcom.png"), 
                   fit: BoxFit.cover,
                 ),
               ),

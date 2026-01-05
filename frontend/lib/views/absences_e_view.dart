@@ -51,7 +51,7 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
                       ),
                     const SizedBox(height: 20),
                     if (viewModel.absencesList.isEmpty)
-                      const Center(child: Text("Aucune absence enregistrée. Bravo !"))
+                      const Center(child: Text("Aucune absence enregistrée. Bravo !", style: TextStyle(color: Colors.black87, fontSize: 16)))
                     else
                       ...viewModel.absencesList.map((absence) => _buildModuleCard(
                             title: absence.subject,
@@ -115,7 +115,7 @@ class _AbsencesScreenState extends State<AbsencesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87)),
           const SizedBox(height: 8),
           Text(details, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           const SizedBox(height: 10),
