@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
-const formidable = require("express-formidable");
 require("dotenv").config();
 
 const app = express();
@@ -10,13 +9,6 @@ connectDB(process.env.MONGO_URI);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Middleware to handle multipart form data
-app.use(formidable({
-  uploadDir: `${__dirname}/../uploads`,
-  keepExtensions: true,
-  multiples: true,
-}));
 
 // Routes
 app.use("/api/auth", require("./routes/auth.routes"));

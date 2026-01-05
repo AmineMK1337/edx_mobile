@@ -32,6 +32,15 @@ const UserSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    // Password reset fields
+    resetCode: {
+      type: String,
+      default: null
+    },
+    resetCodeExpiration: {
+      type: Date,
+      default: null
     }
   },
   { timestamps: true }

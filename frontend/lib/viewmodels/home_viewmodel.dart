@@ -12,6 +12,10 @@ class HomeViewModel extends ChangeNotifier {
 
   bool isLoading = false;
   String? error;
+  
+  // User info
+  String get userName => ApiService.getUserName();
+  String get userRole => ApiService.getUserRole();
 
   // The list of grid items
   final List<DashboardMenuItem> menuItems = [

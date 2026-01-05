@@ -5,6 +5,7 @@ class ApiService {
   static const String baseUrl = 'http://localhost:5000/api';
   static const Duration timeout = Duration(seconds: 30);
   static String? _token;
+  static Map<String, dynamic>? _currentUser;
 
   // GET Request
   static Future<dynamic> get(String endpoint, {bool requiresAuth = false}) async {
@@ -137,15 +138,70 @@ class ApiService {
     } else {
       print('No token in response!');
     }
+    // Store user data
+    if (response['user'] != null) {
+      _currentUser = Map<String, dynamic>.from(response['user']);
+      print('User saved: ${_currentUser?['name']}');
+    }
     return response;
   }
 
   static Future<void> logout() async {
     _token = null;
+    _currentUser = null;
   }
 
   static String? getToken() {
     return _token;
+  }
+
+  static Map<String, dynamic>? getCurrentUser() {
+    return _currentUser;
+  }
+
+  static String getUserName() {
+    return _currentUser?['name'] ?? 'Utilisateur';
+  }
+
+  static String getUserRole() {
+    return _currentUser?['role'] ?? '';
+  }
+
+  // Forgot Password - Request reset code
+  static Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      final response = await post('/auth/forgot-password', {'email': email});
+      return {'success': true, 'message': response['message'] ?? 'Code envoyé'};
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Verify Reset Code
+  static Future<Map<String, dynamic>> verifyResetCode(String email, String code) async {
+    try {
+      final response = await post('/auth/verify-reset-code', {
+        'email': email,
+        'code': code,
+      });
+      return {'success': true, 'message': response['message'] ?? 'Code vérifié'};
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  // Reset Password
+  static Future<Map<String, dynamic>> resetPassword(String email, String code, String newPassword) async {
+    try {
+      final response = await post('/auth/reset-password', {
+        'email': email,
+        'code': code,
+        'newPassword': newPassword,
+      });
+      return {'success': true, 'message': response['message'] ?? 'Mot de passe réinitialisé'};
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
   }
 }
 

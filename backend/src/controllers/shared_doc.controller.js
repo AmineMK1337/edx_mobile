@@ -50,17 +50,13 @@ exports.getSharedDocsByTeacher = async (req, res) => {
 // Create a new shared document
 exports.createSharedDoc = async (req, res) => {
   try {
-    // Get fields from formidable parser (multipart) or body (JSON)
-    const title = req.fields?.title || req.body?.title;
-    const description = req.fields?.description || req.body?.description;
-    const tag = req.fields?.tag || req.body?.tag;
-    const subject = req.fields?.subject || req.body?.subject;
-    const teacher = req.fields?.teacher || req.body?.teacher;
+    // Get fields from body (multer parses form fields to body)
+    const { title, description, tag, subject, teacher } = req.body;
     const userId = req.userId;
 
     console.log("Creating shared doc - Title:", title);
-    console.log("req.fields:", req.fields);
     console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
 
     if (!title) {
       return res.status(400).json({
@@ -68,14 +64,17 @@ exports.createSharedDoc = async (req, res) => {
       });
     }
 
-    // Generate file URL based on title
-    const fileUrl = `/uploads/shared-docs/${Date.now()}_${(title || 'document').replace(/\s+/g, '_')}.pdf`;
+    // Get file URL from uploaded file or generate placeholder
+    let fileUrl = `/uploads/shared-docs/${Date.now()}_${(title || 'document').replace(/\s+/g, '_')}.pdf`;
+    if (req.file) {
+      fileUrl = `/uploads/${req.file.filename}`;
+    }
 
     const sharedDoc = new SharedDoc({
       title,
       description: description || "",
       fileUrl,
-      fileType: "pdf",
+      fileType: req.file?.mimetype || "pdf",
       tag: tag || subject || "Autre",
       teacher: teacher || userId,
       uploadedBy: userId,

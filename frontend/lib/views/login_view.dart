@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../viewmodels/login_viewmodel.dart';
 import 'home_view.dart';
 import 'student_e_view.dart';
+import 'auth/forgot_password_view.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -27,9 +28,14 @@ class _LoginScaffold extends StatefulWidget {
 class _LoginScaffoldState extends State<_LoginScaffold> {
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
+  String? _loginError;
 
   Future<void> _handleLogin(LoginViewModel vm) async {
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _loginError = null;
+    });
 
     try {
       final result = await vm.login();
@@ -52,9 +58,23 @@ class _LoginScaffoldState extends State<_LoginScaffold> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      
+      String errorMsg = e.toString().replaceFirst('Exception: ', '');
+      
+      // Check for common error patterns and show user-friendly message
+      if (errorMsg.contains('401') || 
+          errorMsg.toLowerCase().contains('invalid') ||
+          errorMsg.toLowerCase().contains('incorrect') ||
+          errorMsg.toLowerCase().contains('wrong') ||
+          errorMsg.toLowerCase().contains('not found')) {
+        errorMsg = 'Email ou mot de passe incorrect';
+      } else if (errorMsg.contains('connexion') || errorMsg.contains('timeout')) {
+        errorMsg = 'Erreur de connexion au serveur';
+      }
+      
+      setState(() {
+        _loginError = errorMsg;
+      });
     }
   }
 
@@ -78,7 +98,7 @@ class _LoginScaffoldState extends State<_LoginScaffold> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset('assets/supcom.png', width: 180),
+                  Image.asset('assets/supcom_logo.png', width: 180),
                   const SizedBox(height: 20),
                   const Text(
                     'Veuillez saisir votre login et mot de passe',
@@ -195,6 +215,36 @@ class _LoginScaffoldState extends State<_LoginScaffold> {
 
                   const SizedBox(height: 20),
 
+                  // Error message display
+                  if (_loginError != null) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.redAccent.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.error_outline, color: Colors.redAccent, size: 20),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              _loginError!,
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -222,9 +272,21 @@ class _LoginScaffoldState extends State<_LoginScaffold> {
 
                   const SizedBox(height: 12),
 
-                  const Text(
-                    'Mot de passe: password123',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
+                  // Forgot password link
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ForgotPasswordView()),
+                      );
+                    },
+                    child: const Text(
+                      'Mot de passe oublié ?',
+                      style: TextStyle(
+                        color: Colors.lightBlueAccent,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
                 ],
               ),

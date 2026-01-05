@@ -8,8 +8,10 @@ import 'package:my_app/views/calendar_view.dart';
 import 'package:my_app/views/notes_view.dart';
 import 'package:my_app/views/messages_view.dart';
 import 'package:my_app/views/announcements_view.dart';
+import 'package:my_app/services/api_service.dart';
 import 'absences_view.dart';
 import 'courses_view.dart';
+import 'login_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -119,29 +121,33 @@ class HomeView extends StatelessWidget {
                       const CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 22,
-                        child: Icon(Icons.school, color: const Color.fromARGB(199, 45, 66, 187)),
+                        child: Icon(Icons.school, color: Color.fromARGB(199, 45, 66, 187)),
                       ),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            "Dr. BENALI Ahmed",
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                            viewModel.userName,
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Text(
-                            "Professeur",
-                            style: TextStyle(color: Colors.white70, fontSize: 12),
+                            viewModel.userRole == 'professor' ? 'Professeur' : viewModel.userRole == 'admin' ? 'Administrateur' : viewModel.userRole,
+                            style: const TextStyle(color: Colors.white70, fontSize: 12),
                           ),
                         ],
                       ),
                     ],
                   ),
                   Row(
-                    children: const [
-                      Text("20:49", style: TextStyle(color: Colors.white, fontSize: 16)),
-                      SizedBox(width: 10),
-                      Icon(Icons.logout, color: Colors.white),
+                    children: [
+                      Text(_getCurrentTime(), style: const TextStyle(color: Colors.white, fontSize: 16)),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        icon: const Icon(Icons.logout, color: Colors.white),
+                        onPressed: () => _showLogoutDialog(context),
+                        tooltip: 'Déconnexion',
+                      ),
                     ],
                   )
                 ],
@@ -208,5 +214,48 @@ class HomeView extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.logout, color: Colors.redAccent),
+            SizedBox(width: 10),
+            Text('Déconnexion'),
+          ],
+        ),
+        content: const Text('Êtes-vous sûr de vouloir vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Annuler', style: TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              ApiService.logout();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginView()),
+                (route) => false,
+              );
+            },
+            child: const Text('Déconnecter', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getCurrentTime() {
+    final now = DateTime.now();
+    return '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
   }
 }

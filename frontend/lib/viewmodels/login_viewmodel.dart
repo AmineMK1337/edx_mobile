@@ -25,12 +25,22 @@ class LoginViewModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    final result = await ApiService.login(email, password);
-
-    isLoading = false;
-    notifyListeners();
-
-    return result;
+    try {
+      final result = await ApiService.login(email, password);
+      return result;
+    } catch (e) {
+      // Re-throw with a cleaner message
+      String errorMsg = e.toString();
+      if (errorMsg.contains('401') || 
+          errorMsg.toLowerCase().contains('invalid') ||
+          errorMsg.toLowerCase().contains('unauthorized')) {
+        throw Exception('Email ou mot de passe incorrect');
+      }
+      rethrow;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   @override
