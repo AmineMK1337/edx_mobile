@@ -14,7 +14,11 @@ class PartagerViewModel extends ChangeNotifier {
   
   final List<String> types = ["Cours", "TD", "TP", "Examen", "Rapport"];
   final List<String> subjects = ["Programmation C", "Analyse", "Algorithmique", "Réseaux", "Systèmes", "Maths", "Anglais"];
-  final List<String> classes = ["1ère Année Licence", "2ème Année Licence", "3ème Année Licence", "1ère Année Master", "2ème Année Master"];
+  final List<String> classes = [
+    "INDP1A", "INDP1B", "INDP1C", "INDP1D", "INDP1E", "INDP1F",
+    "INDP2A", "INDP2B", "INDP2C", "INDP2D", "INDP2E", "INDP2F",
+    "INDP3A", "INDP3B", "INDP3C", "INDP3D", "INDP3E", "INDP3F"
+  ];
 
   // Sélectionner le fichier
   Future<void> pickFile() async {

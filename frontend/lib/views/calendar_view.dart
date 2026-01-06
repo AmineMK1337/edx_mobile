@@ -25,6 +25,14 @@ class CalendarView extends StatelessWidget {
             Text("Événements à venir", style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            onPressed: () {
+              Provider.of<CalendarViewModel>(context, listen: false).fetchAllEvents();
+            },
+          ),
+        ],
       ),
       body: Consumer<CalendarViewModel>(
         builder: (context, viewModel, child) {
@@ -33,7 +41,19 @@ class CalendarView extends StatelessWidget {
           }
 
           if (viewModel.error != null) {
-            return Center(child: Text("Erreur: ${viewModel.error}"));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Erreur: ${viewModel.error}"),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => viewModel.fetchAllEvents(),
+                    child: const Text("Réessayer"),
+                  ),
+                ],
+              ),
+            );
           }
 
           return SingleChildScrollView(
@@ -42,32 +62,68 @@ class CalendarView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. Widget Calendrier (Mois)
-                  const MonthCalendarWidget(),
+                  // 1. Widget Calendrier (Mois) - passez les events
+                  MonthCalendarWidget(events: viewModel.events),
                   
                   const SizedBox(height: 25),
                   
                   // 2. Titre de section
-                  const Text(
-                    "Événements à venir",
-                    style: TextStyle(
-                      color: Colors.teal,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Événements à venir",
+                        style: TextStyle(
+                          color: Colors.teal,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        "${viewModel.upcomingEvents.length} événement(s)",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
                   
                   const SizedBox(height: 15),
 
-                  // 3. Liste des événements
-                  viewModel.events.isEmpty
-                      ? const Center(child: Text("Aucun événement"))
+                  // 3. Liste des événements à venir
+                  viewModel.upcomingEvents.isEmpty
+                      ? Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Column(
+                              children: [
+                                Icon(Icons.event_available, size: 48, color: Colors.grey),
+                                SizedBox(height: 12),
+                                Text(
+                                  "Aucun événement à venir",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
                       : ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: viewModel.events.length,
+                          itemCount: viewModel.upcomingEvents.length,
                           itemBuilder: (context, index) {
-                            return EventCard(event: viewModel.events[index]);
+                            return EventCard(event: viewModel.upcomingEvents[index]);
                           },
                         ),
                 ],

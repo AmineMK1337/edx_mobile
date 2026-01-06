@@ -9,6 +9,9 @@ router.use(authenticate);
 // Get all conversations for current user
 router.get('/conversations', messagesController.getConversations);
 
+// Get all messages (sent and received) for current user
+router.get('/all', messagesController.getAllMessages);
+
 // Get conversation with specific user
 router.get('/conversation/:recipientId', messagesController.getConversation);
 

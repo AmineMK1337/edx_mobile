@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:my_app/core/constants/app_colors.dart';
 import 'package:my_app/viewmodels/home_viewmodel.dart';
+import 'package:my_app/viewmodels/document_e_viewmodel.dart';
 import 'package:my_app/widgets/custom_card.dart';
 import 'package:my_app/views/exams_view.dart';
 import 'package:my_app/views/calendar_view.dart';
 import 'package:my_app/views/notes_view.dart';
 import 'package:my_app/views/messages_view.dart';
 import 'package:my_app/views/announcements_view.dart';
+import 'package:my_app/views/documents_prof_view.dart';
 import 'package:my_app/services/api_service.dart';
 import 'absences_view.dart';
 import 'courses_view.dart';
@@ -84,6 +86,16 @@ class HomeView extends StatelessWidget {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const MessagesView()));
                           } else if (item.title == "Annonces") {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const AnnouncementsView()));
+                          } else if (item.title == "Documents") {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangeNotifierProvider(
+                                  create: (_) => DocumentViewModel(),
+                                  child: const DocumentsProfView(),
+                                ),
+                              ),
+                            );
                           }
                         },
                         child: MenuGridItem(item: item),

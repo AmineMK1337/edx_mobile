@@ -20,7 +20,6 @@ class HomeViewModel extends ChangeNotifier {
   // The list of grid items
   final List<DashboardMenuItem> menuItems = [
     DashboardMenuItem(title: "Mes Cours", icon: Icons.menu_book, iconColor: Colors.green, iconBgColor: AppColors.iconBgGreen),
-    DashboardMenuItem(title: "Étudiants", icon: Icons.group, iconColor: Colors.blue, iconBgColor: AppColors.iconBgBlue),
     DashboardMenuItem(title: "Notes", icon: Icons.assignment_turned_in, iconColor: Colors.teal, iconBgColor: AppColors.iconBgGreen),
     DashboardMenuItem(title: "Absences", icon: Icons.calendar_today_outlined, iconColor: Colors.redAccent, iconBgColor: Color(0xFFFFEBEE)),
     DashboardMenuItem(title: "Emploi", icon: Icons.calendar_month, iconColor: Colors.purple, iconBgColor: AppColors.iconBgPurple),
@@ -28,7 +27,6 @@ class HomeViewModel extends ChangeNotifier {
     DashboardMenuItem(title: "Messages", icon: Icons.chat_bubble_outline, iconColor: Colors.cyan, iconBgColor: Colors.cyan.withOpacity(0.1)),
     DashboardMenuItem(title: "Examens", icon: Icons.edit_note, iconColor: Colors.yellow[800]!, iconBgColor: AppColors.iconBgYellow),
     DashboardMenuItem(title: "Annonces", icon: Icons.campaign_outlined, iconColor: Colors.pinkAccent, iconBgColor: Colors.pink.withOpacity(0.1)),
-    DashboardMenuItem(title: "Statistiques", icon: Icons.bar_chart, iconColor: Colors.indigo, iconBgColor: Colors.indigo.withOpacity(0.1)),
     DashboardMenuItem(title: "Calendrier", icon: Icons.date_range, iconColor: Colors.teal, iconBgColor: Colors.teal.withOpacity(0.1)),
     DashboardMenuItem(title: "Ressources", icon: Icons.library_books, iconColor: Colors.amber, iconBgColor: Colors.amber.withOpacity(0.1)),
   ];

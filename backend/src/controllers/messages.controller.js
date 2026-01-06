@@ -1,10 +1,37 @@
 const Message = require("../models/message");
 const User = require("../models/user");
+const mongoose = require("mongoose");
+
+// Get all messages (sent and received) for the current user
+exports.getAllMessages = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { filter } = req.query; // 'sent', 'received', or 'all' (default)
+
+    let query = {};
+    if (filter === 'sent') {
+      query = { sender: userId };
+    } else if (filter === 'received') {
+      query = { recipient: userId };
+    } else {
+      query = { $or: [{ sender: userId }, { recipient: userId }] };
+    }
+
+    const messages = await Message.find(query)
+      .populate("sender", "name email role")
+      .populate("recipient", "name email role")
+      .sort({ createdAt: -1 });
+
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 // Get all conversations for the current user
 exports.getConversations = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = new mongoose.Types.ObjectId(req.userId);
 
     // Get all conversations where user is either sender or recipient
     const conversations = await Message.aggregate([

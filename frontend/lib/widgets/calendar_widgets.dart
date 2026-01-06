@@ -3,12 +3,55 @@ import '../core/constants/app_colors.dart';
 import '../models/calendar_event_model.dart';
 import '../viewmodels/calendar_viewmodel.dart';
 
-// --- WIDGET DE LA GRILLE CALENDRIER (Custom) ---
-class MonthCalendarWidget extends StatelessWidget {
-  const MonthCalendarWidget({super.key});
+// --- WIDGET DE LA GRILLE CALENDRIER (Dynamic) ---
+class MonthCalendarWidget extends StatefulWidget {
+  final List<CalendarEventModel> events;
+  
+  const MonthCalendarWidget({super.key, required this.events});
+
+  @override
+  State<MonthCalendarWidget> createState() => _MonthCalendarWidgetState();
+}
+
+class _MonthCalendarWidgetState extends State<MonthCalendarWidget> {
+  late DateTime _currentMonth;
+  late DateTime _selectedDay;
+  
+  @override
+  void initState() {
+    super.initState();
+    _currentMonth = DateTime.now();
+    _selectedDay = DateTime.now();
+  }
+
+  void _previousMonth() {
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
+    });
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ];
+    return months[month - 1];
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Get event days for the current month
+    final eventDays = widget.events
+        .where((e) => e.date.year == _currentMonth.year && e.date.month == _currentMonth.month)
+        .map((e) => e.date.day)
+        .toSet();
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -17,61 +60,137 @@ class MonthCalendarWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Text(
-            "Novembre 2025",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+          // Month navigation
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left, color: Colors.teal),
+                onPressed: _previousMonth,
+              ),
+              Text(
+                "${_getMonthName(_currentMonth.month)} ${_currentMonth.year}",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87),
+              ),
+              IconButton(
+                icon: const Icon(Icons.chevron_right, color: Colors.teal),
+                onPressed: _nextMonth,
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          // En-têtes des jours
+          const SizedBox(height: 15),
+          // Day headers
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: ["L", "M", "M", "J", "V", "S", "D"]
                 .map((day) => SizedBox(
                       width: 35,
-                      child: Center(child: Text(day, style: const TextStyle(color: Colors.grey))),
+                      child: Center(child: Text(day, style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600))),
                     ))
                 .toList(),
           ),
           const SizedBox(height: 10),
-          // Grille des jours (Hardcoded pour le visuel Novembre 2025 selon l'image)
-          // Semaine 1
-          _buildWeekRow(["", "", "", "", "", "1", "2"]),
-          _buildWeekRow(["3", "4", "5", "6", "7", "8", "9"]),
-          _buildWeekRow(["10", "11", "12", "13", "14", "15", "16"], selectedDay: "16"),
-          _buildWeekRow(["17", "18", "19", "20", "21", "22", "23"], eventDays: ["20", "22"]),
-          _buildWeekRow(["24", "25", "26", "27", "28", "29", "30"], eventDays: ["25", "27"]),
+          // Calendar grid
+          _buildCalendarGrid(eventDays),
         ],
       ),
     );
   }
 
-  Widget _buildWeekRow(List<String> days, {String? selectedDay, List<String>? eventDays}) {
+  Widget _buildCalendarGrid(Set<int> eventDays) {
+    final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final lastDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
+    final daysInMonth = lastDayOfMonth.day;
+    
+    // Monday = 1, Sunday = 7 in Dart
+    int startWeekday = firstDayOfMonth.weekday; // 1 = Monday
+    
+    List<Widget> rows = [];
+    List<String> currentWeek = [];
+    
+    // Add empty cells for days before the first of the month
+    for (int i = 1; i < startWeekday; i++) {
+      currentWeek.add("");
+    }
+    
+    // Add all days of the month
+    for (int day = 1; day <= daysInMonth; day++) {
+      currentWeek.add(day.toString());
+      
+      if (currentWeek.length == 7) {
+        rows.add(_buildWeekRow(currentWeek, eventDays));
+        currentWeek = [];
+      }
+    }
+    
+    // Add remaining days if the last week is incomplete
+    if (currentWeek.isNotEmpty) {
+      while (currentWeek.length < 7) {
+        currentWeek.add("");
+      }
+      rows.add(_buildWeekRow(currentWeek, eventDays));
+    }
+    
+    return Column(children: rows);
+  }
+
+  Widget _buildWeekRow(List<String> days, Set<int> eventDays) {
+    final today = DateTime.now();
+    final isCurrentMonth = _currentMonth.year == today.year && _currentMonth.month == today.month;
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: days.map((day) {
-          if (day.isEmpty) return const SizedBox(width: 35);
+          if (day.isEmpty) return const SizedBox(width: 35, height: 35);
           
-          bool isSelected = day == selectedDay;
-          bool isEvent = eventDays?.contains(day) ?? false;
+          final dayNum = int.parse(day);
+          final isToday = isCurrentMonth && dayNum == today.day;
+          final isSelected = _currentMonth.year == _selectedDay.year && 
+                            _currentMonth.month == _selectedDay.month && 
+                            dayNum == _selectedDay.day;
+          final hasEvent = eventDays.contains(dayNum);
 
-          return Container(
-            width: 35,
-            height: 35,
-            decoration: BoxDecoration(
-              color: isSelected 
-                  ? AppColors.calSelectedDayBg 
-                  : (isEvent ? AppColors.calEventDayBg : Colors.transparent),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Text(
-                day,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : (isEvent ? Colors.blue : Colors.black87),
-                  fontWeight: isSelected || isEvent ? FontWeight.bold : FontWeight.normal,
-                ),
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedDay = DateTime(_currentMonth.year, _currentMonth.month, dayNum);
+              });
+            },
+            child: Container(
+              width: 35,
+              height: 35,
+              decoration: BoxDecoration(
+                color: isSelected 
+                    ? AppColors.calSelectedDayBg 
+                    : (isToday ? Colors.teal.withOpacity(0.2) : (hasEvent ? AppColors.calEventDayBg : Colors.transparent)),
+                borderRadius: BorderRadius.circular(8),
+                border: isToday && !isSelected ? Border.all(color: Colors.teal, width: 2) : null,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    day,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : (isToday ? Colors.teal : (hasEvent ? Colors.blue : Colors.black87)),
+                      fontWeight: isSelected || isToday || hasEvent ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  if (hasEvent && !isSelected)
+                    Positioned(
+                      bottom: 2,
+                      child: Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: Colors.redAccent,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
           );

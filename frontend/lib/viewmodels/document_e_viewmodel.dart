@@ -7,7 +7,7 @@ class DocumentViewModel extends ChangeNotifier {
   String _selectedCategory = "Tout";
   bool _isLoading = true;
 
-  final List<String> categories = ["Tout", "Attestations", "Notes", "Stages", "Divers"];
+  final List<String> categories = ["Tout", "Cours", "TD", "TP"];
 
   List<SchoolDocument> get filteredDocuments {
     if (_selectedCategory == "Tout") return _allDocuments;
@@ -46,10 +46,9 @@ class DocumentViewModel extends ChangeNotifier {
 
   IconData getIconForCategory(String category) {
     switch (category) {
-      case "Attestations": return Icons.description;
-      case "Notes": return Icons.assignment_turned_in;
-      case "Stages": return Icons.work;
-      case "Divers": return Icons.credit_card;
+      case "Cours": return Icons.menu_book;
+      case "TD": return Icons.edit_note;
+      case "TP": return Icons.computer;
       default: return Icons.insert_drive_file;
     }
   }
