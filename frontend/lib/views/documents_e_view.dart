@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../viewmodels/document_e_viewmodel.dart';
 import '../models/document_e_model.dart';
 import '../core/constants/app_colors.dart';
-import 'demandedoc_e_view.dart';
+import 'partager_e_view.dart';
 import 'voir_e_view.dart';
 
 class DocumentsScreen extends StatefulWidget {
@@ -69,20 +69,20 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         ],
       ),
       
-      // --- BOUTON DE DEMANDE ---
+      // --- BOUTON DE PUBLICATION ---
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
           onPressed: () => Navigator.push(
             context, 
-            MaterialPageRoute(builder: (context) => const DemanderDocumentScreen())
+            MaterialPageRoute(builder: (context) => const UploadDocumentPage())
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryPink,
             padding: const EdgeInsets.symmetric(vertical: 15),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
-          child: const Text("Demander un document", 
+          child: const Text("Publier un document", 
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),
       ),

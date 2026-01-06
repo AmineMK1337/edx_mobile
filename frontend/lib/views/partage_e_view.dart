@@ -120,7 +120,7 @@ class _PartageDocumentsPageState extends State<PartageDocumentsPage> {
           if (result == true) vm.fetchDocuments();
         },
         icon: const Icon(Icons.add, color: AppColors.primaryPink),
-        label: const Text("Partager un document", style: TextStyle(color: AppColors.primaryPink)),
+        label: const Text("Publier un document", style: TextStyle(color: AppColors.primaryPink)),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
           minimumSize: const Size(200, 45),

@@ -14,13 +14,14 @@ class PartagerViewModel extends ChangeNotifier {
   
   final List<String> types = ["Cours", "TD", "TP", "Examen", "Rapport"];
   final List<String> subjects = ["Programmation C", "Analyse", "Algorithmique", "Réseaux", "Systèmes", "Maths", "Anglais"];
+  final List<String> classes = ["1ère Année Licence", "2ème Année Licence", "3ème Année Licence", "1ère Année Master", "2ème Année Master"];
 
-  // Sélectionner le fichier PDF
+  // Sélectionner le fichier
   Future<void> pickFile() async {
     try {
       _pickerResult = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf'],
+        allowedExtensions: ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx'],
         withData: true,
       );
       if (_pickerResult != null) {
@@ -45,6 +46,7 @@ class PartagerViewModel extends ChangeNotifier {
       debugPrint("Upload baseUrl: $baseUrl");
       debugPrint("Token available: ${token != null}");
       debugPrint("Title: ${data.title}");
+      debugPrint("Target Class: ${data.targetClass}");
       
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/api/shared-docs'));
       
@@ -55,8 +57,7 @@ class PartagerViewModel extends ChangeNotifier {
       
       // Add form fields
       request.fields['title'] = data.title;
-      request.fields['subject'] = data.subject;
-      request.fields['tag'] = data.tag;
+      request.fields['targetClass'] = data.targetClass;
       request.fields['description'] = data.description;
       request.fields['teacher'] = data.teacher;
 

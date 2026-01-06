@@ -51,7 +51,7 @@ exports.getSharedDocsByTeacher = async (req, res) => {
 exports.createSharedDoc = async (req, res) => {
   try {
     // Get fields from body (multer parses form fields to body)
-    const { title, description, tag, subject, teacher } = req.body;
+    const { title, description, teacher, targetClass } = req.body;
     const userId = req.userId;
 
     console.log("Creating shared doc - Title:", title);
@@ -64,6 +64,12 @@ exports.createSharedDoc = async (req, res) => {
       });
     }
 
+    if (!targetClass) {
+      return res.status(400).json({
+        error: "targetClass is required"
+      });
+    }
+
     // Get file URL from uploaded file or generate placeholder
     let fileUrl = `/uploads/shared-docs/${Date.now()}_${(title || 'document').replace(/\s+/g, '_')}.pdf`;
     if (req.file) {
@@ -73,9 +79,10 @@ exports.createSharedDoc = async (req, res) => {
     const sharedDoc = new SharedDoc({
       title,
       description: description || "",
+      targetClass,
       fileUrl,
       fileType: req.file?.mimetype || "pdf",
-      tag: tag || subject || "Autre",
+      tag: "Autre",
       teacher: teacher || userId,
       uploadedBy: userId,
       isPublished: true
