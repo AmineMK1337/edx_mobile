@@ -64,6 +64,12 @@ exports.createSharedDoc = async (req, res) => {
       });
     }
 
+    if (!targetClass) {
+      return res.status(400).json({
+        error: "targetClass is required"
+      });
+    }
+
     // Get file URL from uploaded file or generate placeholder
     let fileUrl = `/uploads/shared-docs/${Date.now()}_${(title || 'document').replace(/\s+/g, '_')}.pdf`;
     if (req.file) {
@@ -73,7 +79,7 @@ exports.createSharedDoc = async (req, res) => {
     const sharedDoc = new SharedDoc({
       title,
       description: description || "",
-      targetClass: targetClass || "",
+      targetClass,
       fileUrl,
       fileType: req.file?.mimetype || "pdf",
       tag: "Autre",

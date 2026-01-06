@@ -9,7 +9,7 @@ const SharedDocSchema = new mongoose.Schema(
     description: String,
     targetClass: {
       type: String,
-      default: ""
+      required: true
     },
     teacher: {
       type: mongoose.Schema.Types.ObjectId,
