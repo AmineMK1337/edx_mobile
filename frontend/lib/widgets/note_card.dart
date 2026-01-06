@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
-import '../models/note_model.dart';
-import '../viewmodels/notes_viewmodel.dart';
+import '../models/professor/note_model.dart';
+import '../viewmodels/professor/notes_viewmodel.dart';
 
 class NoteCard extends StatelessWidget {
   final NoteModel note;

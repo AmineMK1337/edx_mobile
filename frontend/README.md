@@ -23,18 +23,43 @@ flutter run
 
 ## Project Structure
 
+The project is organized by user role for better maintainability and scalability:
+
 ```
 lib/
 ├── main.dart              # Entry point
 ├── core/
-│   ├── constants/         # App constants
-│   └── utils/             # Utility functions
-├── models/                # Data models
+│   └── constants/         # App constants (colors, etc.)
+├── models/
+│   ├── student/           # Student-specific data models
+│   ├── professor/         # Professor-specific data models
+│   ├── common/            # Shared data models
+│   └── admin/             # Administration data models (placeholder)
 ├── services/              # API and external services
-├── viewmodels/            # Business logic (MVVM pattern)
-├── views/                 # UI screens
+├── viewmodels/
+│   ├── student/           # Student-specific view models
+│   ├── professor/         # Professor-specific view models
+│   ├── common/            # Shared view models (login, settings, etc.)
+│   ├── admin/             # Administration view models (placeholder)
+│   └── auth/              # Authentication view models
+├── views/
+│   ├── student/           # Student screens (student_e_view, absences_e_view, etc.)
+│   ├── professor/         # Professor screens (home_view, exams_view, etc.)
+│   ├── common/            # Shared screens (login, settings, about, general_info)
+│   ├── admin/             # Administration screens (placeholder)
+│   └── auth/              # Authentication screens (forgot_password, reset_password)
 └── widgets/               # Reusable widgets
 ```
+
+### User Roles
+
+1. **Student** (`student/`): Contains all student-specific pages for viewing grades, schedules, absences, documents, messages, and tickets.
+
+2. **Professor** (`professor/`): Contains all professor-specific pages for managing courses, exams, notes, absences, announcements, and calendar.
+
+3. **Common** (`common/`): Contains pages shared across all user roles like login, settings, about, and general information.
+
+4. **Admin** (`admin/`): Placeholder folder for future administration functionality.
 
 ## Architecture Pattern
 

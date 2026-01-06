@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
-import '../models/exam_model.dart';
-import '../viewmodels/exams_viewmodel.dart';
+import '../models/professor/exam_model.dart';
+import '../viewmodels/professor/exams_viewmodel.dart';
 
 class ExamCard extends StatelessWidget {
   final ExamModel exam;

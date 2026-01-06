@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
-import '../models/calendar_event_model.dart';
-import '../viewmodels/calendar_viewmodel.dart';
+import '../models/professor/calendar_event_model.dart';
+import '../viewmodels/professor/calendar_viewmodel.dart';
 
 // --- WIDGET DE LA GRILLE CALENDRIER (Dynamic) ---
 class MonthCalendarWidget extends StatefulWidget {

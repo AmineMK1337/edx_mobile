@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
-import '../models/course_model.dart';
-import '../views/documents_view.dart';
+import '../models/professor/course_model.dart';
+import '../views/professor/documents_view.dart';
 
 class CourseCard extends StatelessWidget {
   final CourseModel course;

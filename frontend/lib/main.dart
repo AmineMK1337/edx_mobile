@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:my_app/views/login_view.dart';
-import 'package:my_app/viewmodels/home_viewmodel.dart';
-import 'package:my_app/viewmodels/exams_viewmodel.dart';
-import 'package:my_app/viewmodels/calendar_viewmodel.dart';
-import 'package:my_app/viewmodels/notes_viewmodel.dart';
-import 'package:my_app/viewmodels/courses_viewmodel.dart';
-import 'package:my_app/viewmodels/absences_viewmodel.dart';
+// Common imports
+import 'package:my_app/views/common/login_view.dart';
+import 'package:my_app/viewmodels/common/settings_viewmodel.dart';
+import 'package:my_app/viewmodels/common/about_viewmodel.dart';
+import 'package:my_app/viewmodels/common/general_info_viewmodel.dart';
+// Professor viewmodels
+import 'package:my_app/viewmodels/professor/home_viewmodel.dart';
+import 'package:my_app/viewmodels/professor/exams_viewmodel.dart';
+import 'package:my_app/viewmodels/professor/calendar_viewmodel.dart';
+import 'package:my_app/viewmodels/professor/notes_viewmodel.dart';
+import 'package:my_app/viewmodels/professor/courses_viewmodel.dart';
+import 'package:my_app/viewmodels/professor/absences_viewmodel.dart';
 // Student viewmodels
-import 'package:my_app/viewmodels/student_e_viewmodel.dart';
-import 'package:my_app/viewmodels/profile_e_viewmodel.dart';
-import 'package:my_app/viewmodels/resultats_e_viewmodel.dart';
-import 'package:my_app/viewmodels/emploi_e_viewmodel.dart';
-import 'package:my_app/viewmodels/group_e_viewmodel.dart';
-import 'package:my_app/viewmodels/messages_e_viewmodel.dart';
-import 'package:my_app/viewmodels/info_e_viewmodel.dart';
-import 'package:my_app/viewmodels/absence_e_viewmodel.dart';
-import 'package:my_app/viewmodels/document_e_viewmodel.dart';
-import 'package:my_app/viewmodels/partage_e_viewmodel.dart';
-import 'package:my_app/viewmodels/demandedoc_e_viewmodel.dart';
-import 'package:my_app/viewmodels/nmessage_e_viewmodel.dart';
-import 'package:my_app/viewmodels/voir_document_e_viewmodel.dart';
-import 'package:my_app/viewmodels/partager_e_viewmodel.dart';
-import 'package:my_app/viewmodels/ticket_e_viewmodel.dart';
-import 'package:my_app/viewmodels/settings_viewmodel.dart';
-import 'package:my_app/viewmodels/about_viewmodel.dart';
-import 'package:my_app/viewmodels/general_info_viewmodel.dart';
+import 'package:my_app/viewmodels/student/student_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/profile_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/resultats_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/emploi_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/group_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/messages_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/info_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/absence_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/document_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/partage_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/demandedoc_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/nmessage_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/voir_document_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/partager_e_viewmodel.dart';
+import 'package:my_app/viewmodels/student/ticket_e_viewmodel.dart';
 
 void main() {
   runApp(const MyApp());

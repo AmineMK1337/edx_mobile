@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
-import '../models/absence_model.dart';
-import '../viewmodels/absences_viewmodel.dart';
-import '../views/absence_marking_view.dart';
-import '../views/absence_list_view.dart';
+import '../models/professor/absence_model.dart';
+import '../viewmodels/professor/absences_viewmodel.dart';
+import '../views/professor/absence_marking_view.dart';
+import '../views/professor/absence_list_view.dart';
 
 class AbsenceCard extends StatelessWidget {
   final AbsenceModel absence;
