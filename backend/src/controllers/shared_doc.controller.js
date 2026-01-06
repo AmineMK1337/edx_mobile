@@ -47,6 +47,22 @@ exports.getSharedDocsByTeacher = async (req, res) => {
   }
 };
 
+// Get my shared documents (documents uploaded by the current user)
+exports.getMySharedDocs = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const sharedDocs = await SharedDoc.find({ uploadedBy: userId })
+      .populate("uploadedBy", "name email")
+      .populate("teacher", "name email")
+      .sort({ createdAt: -1 });
+
+    res.json(sharedDocs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Create a new shared document
 exports.createSharedDoc = async (req, res) => {
   try {
@@ -72,8 +88,34 @@ exports.createSharedDoc = async (req, res) => {
 
     // Get file URL from uploaded file or generate placeholder
     let fileUrl = `/uploads/shared-docs/${Date.now()}_${(title || 'document').replace(/\s+/g, '_')}.pdf`;
+    let fileType = "pdf";
+    
     if (req.file) {
       fileUrl = `/uploads/${req.file.filename}`;
+      
+      // Map mimetype to allowed fileType enum values
+      const mimeToFileType = {
+        'application/pdf': 'pdf',
+        'application/msword': 'doc',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+        'application/vnd.ms-excel': 'xls',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+        'application/vnd.ms-powerpoint': 'ppt',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'application/octet-stream': 'other'
+      };
+      
+      fileType = mimeToFileType[req.file.mimetype] || 'other';
+      
+      // Also try to determine from file extension if mimetype is generic
+      if (fileType === 'other' && req.file.originalname) {
+        const ext = req.file.originalname.split('.').pop()?.toLowerCase();
+        if (['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'jpg', 'png'].includes(ext)) {
+          fileType = ext;
+        }
+      }
     }
 
     const sharedDoc = new SharedDoc({
@@ -81,9 +123,9 @@ exports.createSharedDoc = async (req, res) => {
       description: description || "",
       targetClass,
       fileUrl,
-      fileType: req.file?.mimetype || "pdf",
+      fileType,
       tag: "Autre",
-      teacher: teacher || userId,
+      teacher: userId,  // Always use the authenticated user's ID
       uploadedBy: userId,
       isPublished: true
     });

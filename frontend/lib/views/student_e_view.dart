@@ -18,6 +18,7 @@ import 'info_e_view.dart';
 import 'resultats_e_view.dart';
 import 'documents_e_view.dart'; 
 import 'profile_e_view.dart';
+import 'tickets_e_view.dart';
 
 class StudentHome extends StatefulWidget {
   const StudentHome({super.key});
@@ -167,6 +168,9 @@ class _StudentHomeState extends State<StudentHome> {
                   }),
                   buildMenu(context, "Partage", Icons.share, onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const PartageDocumentsPage()));
+                  }),
+                  buildMenu(context, "Demandes", Icons.assignment, onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const TicketsScreen()));
                   }),
                   buildMenu(context, "Site Web", Icons.public, onTap: () async {
                     final Uri url = Uri.parse("https://supcom.tn/");

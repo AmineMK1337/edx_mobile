@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import '../models/upload_request_e_model.dart';
@@ -67,10 +68,34 @@ class PartagerViewModel extends ChangeNotifier {
 
       // Add file
       var file = _pickerResult!.files.single;
+      
+      // Determine content type based on file extension
+      String? mimeType;
+      final ext = file.extension?.toLowerCase();
+      switch (ext) {
+        case 'pdf': mimeType = 'application/pdf'; break;
+        case 'doc': mimeType = 'application/msword'; break;
+        case 'docx': mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'; break;
+        case 'ppt': mimeType = 'application/vnd.ms-powerpoint'; break;
+        case 'pptx': mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'; break;
+        case 'xls': mimeType = 'application/vnd.ms-excel'; break;
+        case 'xlsx': mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; break;
+        default: mimeType = 'application/octet-stream';
+      }
+      
       if (kIsWeb) {
-        request.files.add(http.MultipartFile.fromBytes('pdfFile', file.bytes!, filename: file.name));
+        request.files.add(http.MultipartFile.fromBytes(
+          'pdfFile', 
+          file.bytes!, 
+          filename: file.name,
+          contentType: MediaType.parse(mimeType),
+        ));
       } else {
-        request.files.add(await http.MultipartFile.fromPath('pdfFile', file.path!));
+        request.files.add(await http.MultipartFile.fromPath(
+          'pdfFile', 
+          file.path!,
+          contentType: MediaType.parse(mimeType),
+        ));
       }
 
       var response = await request.send();

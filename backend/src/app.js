@@ -29,5 +29,6 @@ app.use("/api/shared-docs", require("./routes/shared_docs.routes"));
 app.use("/api/doc-requests", require("./routes/doc_requests.routes"));
 app.use("/api/messages", require("./routes/messages.routes"));
 app.use("/api/announcements", require("./routes/announcements.routes"));
+app.use("/api/tickets", require("./routes/tickets.routes"));
 
 module.exports = app;

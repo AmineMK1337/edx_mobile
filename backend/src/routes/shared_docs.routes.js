@@ -20,7 +20,7 @@ const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
   fileFilter: (req, file, cb) => {
-    const allowedTypes = [
+    const allowedMimeTypes = [
       "application/pdf",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -29,9 +29,13 @@ const upload = multer({
       "application/vnd.ms-excel",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "image/png",
-      "image/jpeg"
+      "image/jpeg",
+      "application/octet-stream" // Sometimes browsers send this for PDFs
     ];
-    if (allowedTypes.includes(file.mimetype)) {
+    const allowedExtensions = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".png", ".jpg", ".jpeg"];
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+    if (allowedMimeTypes.includes(file.mimetype) || allowedExtensions.includes(ext)) {
       cb(null, true);
     } else {
       cb(new Error("Type de fichier non autorisé"), false);
@@ -47,6 +51,9 @@ router.get("/tag/:tag", sharedDocController.getSharedDocsByTag);
 
 // Get shared documents by teacher (public)
 router.get("/teacher/:teacherId", sharedDocController.getSharedDocsByTeacher);
+
+// Get my shared documents (protected) - documents uploaded by the current user
+router.get("/my", authenticate, sharedDocController.getMySharedDocs);
 
 // Create a new shared document (protected) - with file upload
 router.post("/", authenticate, upload.single("pdfFile"), sharedDocController.createSharedDoc);
