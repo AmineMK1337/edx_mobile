@@ -7,6 +7,10 @@ const SharedDocSchema = new mongoose.Schema(
       required: true
     },
     description: String,
+    targetClass: {
+      type: String,
+      default: ""
+    },
     teacher: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

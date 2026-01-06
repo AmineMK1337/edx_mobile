@@ -59,8 +59,6 @@ class PartagerViewModel extends ChangeNotifier {
       request.fields['title'] = data.title;
       request.fields['targetClass'] = data.targetClass;
       request.fields['description'] = data.description;
-      request.fields['subject'] = data.subject;
-      request.fields['tag'] = data.tag;
       request.fields['teacher'] = data.teacher;
 
       // Add file

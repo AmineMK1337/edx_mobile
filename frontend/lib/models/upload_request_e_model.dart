@@ -2,16 +2,12 @@ class UploadRequest {
   final String title;
   final String targetClass;
   final String description;
-  final String subject;
-  final String tag;
   final String teacher;
 
   UploadRequest({
     required this.title,
     this.targetClass = "",
     this.description = "",
-    this.subject = "",
-    this.tag = "",
     this.teacher = "Professeur",
   });
 
@@ -21,8 +17,6 @@ class UploadRequest {
       'title': title,
       'targetClass': targetClass,
       'description': description,
-      'subject': subject,
-      'tag': tag,
       'teacher': teacher,
     };
   }
