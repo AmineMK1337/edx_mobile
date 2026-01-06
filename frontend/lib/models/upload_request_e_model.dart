@@ -6,7 +6,7 @@ class UploadRequest {
 
   UploadRequest({
     required this.title,
-    this.targetClass = "",
+    required this.targetClass,
     this.description = "",
     this.teacher = "Professeur",
   });

@@ -51,7 +51,7 @@ exports.getSharedDocsByTeacher = async (req, res) => {
 exports.createSharedDoc = async (req, res) => {
   try {
     // Get fields from body (multer parses form fields to body)
-    const { title, description, tag, subject, teacher, targetClass } = req.body;
+    const { title, description, teacher, targetClass } = req.body;
     const userId = req.userId;
 
     console.log("Creating shared doc - Title:", title);
@@ -76,7 +76,7 @@ exports.createSharedDoc = async (req, res) => {
       targetClass: targetClass || "",
       fileUrl,
       fileType: req.file?.mimetype || "pdf",
-      tag: tag || subject || "Autre",
+      tag: "Autre",
       teacher: teacher || userId,
       uploadedBy: userId,
       isPublished: true
