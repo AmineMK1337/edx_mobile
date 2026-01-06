@@ -19,6 +19,8 @@ import 'resultats_e_view.dart';
 import 'documents_e_view.dart'; 
 import 'profile_e_view.dart';
 import 'tickets_e_view.dart';
+import 'settings_view.dart';
+import 'about_view.dart';
 
 class StudentHome extends StatefulWidget {
   const StudentHome({super.key});
@@ -49,32 +51,67 @@ class _StudentHomeState extends State<StudentHome> {
         elevation: 0,
         title: Row(
           children: [
-            // --- PHOTO DE PROFIL INTERACTIVE AVEC EFFET VISUEL ---
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ProfileView()),
-                  );
-                },
-                borderRadius: BorderRadius.circular(25),
-                splashColor: AppColors.primaryPink.withOpacity(0.2),
-                highlightColor: AppColors.primaryPink.withOpacity(0.1),
-                child: Container(
-                  padding: const EdgeInsets.all(2), // Espace pour l'effet de clic
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+            // --- PHOTO DE PROFIL INTERACTIVE AVEC MENU POPUP ---
+            PopupMenuButton<String>(
+              offset: const Offset(0, 50),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              onSelected: (value) {
+                switch (value) {
+                  case 'profile':
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileView()));
+                    break;
+                  case 'settings':
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsView()));
+                    break;
+                  case 'about':
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutView()));
+                    break;
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'profile',
+                  child: Row(
+                    children: [
+                      Icon(Icons.person, color: Colors.blueGrey),
+                      SizedBox(width: 12),
+                      Text('Mon Profil'),
+                    ],
                   ),
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    backgroundImage: (student?.photoUrl != null)
-                        ? NetworkImage(student!.photoUrl!)
-                        : const AssetImage('assets/user.jpg') as ImageProvider,
+                ),
+                const PopupMenuItem(
+                  value: 'settings',
+                  child: Row(
+                    children: [
+                      Icon(Icons.settings, color: Colors.blueGrey),
+                      SizedBox(width: 12),
+                      Text('Paramètres'),
+                    ],
                   ),
+                ),
+                const PopupMenuItem(
+                  value: 'about',
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blueGrey),
+                      SizedBox(width: 12),
+                      Text("À propos"),
+                    ],
+                  ),
+                ),
+              ],
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                ),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white,
+                  backgroundImage: (student?.photoUrl != null)
+                      ? NetworkImage(student!.photoUrl!)
+                      : const AssetImage('assets/user.jpg') as ImageProvider,
                 ),
               ),
             ),

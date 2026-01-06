@@ -14,6 +14,8 @@ import 'package:my_app/services/api_service.dart';
 import 'absences_view.dart';
 import 'courses_view.dart';
 import 'login_view.dart';
+import 'settings_view.dart';
+import 'about_view.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -130,10 +132,46 @@ class HomeView extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 22,
-                        child: Icon(Icons.school, color: Color.fromARGB(199, 45, 66, 187)),
+                      PopupMenuButton<String>(
+                        offset: const Offset(0, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'settings':
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsView()));
+                              break;
+                            case 'about':
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutView()));
+                              break;
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'settings',
+                            child: Row(
+                              children: [
+                                Icon(Icons.settings, color: Colors.blueGrey),
+                                SizedBox(width: 12),
+                                Text('Paramètres'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'about',
+                            child: Row(
+                              children: [
+                                Icon(Icons.info_outline, color: Colors.blueGrey),
+                                SizedBox(width: 12),
+                                Text("À propos"),
+                              ],
+                            ),
+                          ),
+                        ],
+                        child: const CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 22,
+                          child: Icon(Icons.school, color: Color.fromARGB(199, 45, 66, 187)),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Column(

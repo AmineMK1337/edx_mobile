@@ -30,5 +30,9 @@ app.use("/api/doc-requests", require("./routes/doc_requests.routes"));
 app.use("/api/messages", require("./routes/messages.routes"));
 app.use("/api/announcements", require("./routes/announcements.routes"));
 app.use("/api/tickets", require("./routes/tickets.routes"));
+app.use("/api/settings", require("./routes/settings.routes"));
+app.use("/api/general-info", require("./routes/general_info.routes"));
+app.use("/api/school-info", require("./routes/school_info.routes"));
+app.use("/api/profile", require("./routes/profile.routes"));
 
 module.exports = app;

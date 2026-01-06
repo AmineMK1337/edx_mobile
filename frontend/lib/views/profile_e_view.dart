@@ -37,26 +37,61 @@ class _ProfileViewState extends State<ProfileView> {
       ),
       body: profileVM.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                const SizedBox(height: 20),
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: (studentBase?.photoUrl != null)
-                      ? NetworkImage(studentBase!.photoUrl!)
-                      : const AssetImage('assets/user.jpg') as ImageProvider,
-                ),
-                const SizedBox(height: 10),
-                Text("${studentBase?.firstName} ${studentBase?.lastName}",
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 30),
-                
-                // Affichage du téléphone (Ligne qui posait problème)
-                _buildInfoCard(Icons.phone, "Téléphone", profileVM.profile?.phone),
-                _buildInfoCard(Icons.email, "Email", profileVM.profile?.email),
-                _buildInfoCard(Icons.location_on, "Adresse", profileVM.profile?.address),
-              ],
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: (studentBase?.photoUrl != null)
+                        ? NetworkImage(studentBase!.photoUrl!)
+                        : const AssetImage('assets/user.jpg') as ImageProvider,
+                  ),
+                  const SizedBox(height: 10),
+                  Text("${studentBase?.firstName ?? ''} ${studentBase?.lastName ?? ''}",
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  Text(studentBase?.studentClass ?? '', 
+                      style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 20),
+
+                  // Section: Informations personnelles
+                  _buildSectionTitle("Informations personnelles"),
+                  _buildInfoCard(Icons.badge, "Numéro étudiant", studentBase?.id),
+                  _buildInfoCard(Icons.email, "Email", profileVM.profile?.email),
+                  _buildInfoCard(Icons.phone, "Téléphone", profileVM.profile?.phone),
+                  _buildInfoCard(Icons.location_on, "Adresse", profileVM.profile?.address),
+                  _buildInfoCard(Icons.cake, "Date de naissance", profileVM.profile?.birthDate),
+
+                  const SizedBox(height: 20),
+
+                  // Section: Informations académiques
+                  _buildSectionTitle("Informations académiques"),
+                  _buildInfoCard(Icons.school, "Filière", studentBase?.studentClass),
+                  _buildInfoCard(Icons.calendar_today, "Année académique", "2024-2025"),
+                  _buildInfoCard(Icons.group, "Groupe", studentBase?.studentClass),
+                  
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.teal,
+          ),
+        ),
+      ),
     );
   }
 
@@ -79,12 +114,14 @@ class _ProfileViewState extends State<ProfileView> {
         children: [
           Icon(icon, color: AppColors.primaryPink),
           const SizedBox(width: 15),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-              Text(value ?? "Chargement...", style: const TextStyle(fontWeight: FontWeight.bold)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(value ?? "Non renseigné", style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
           ),
         ],
       ),

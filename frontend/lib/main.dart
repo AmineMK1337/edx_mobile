@@ -23,6 +23,9 @@ import 'package:my_app/viewmodels/nmessage_e_viewmodel.dart';
 import 'package:my_app/viewmodels/voir_document_e_viewmodel.dart';
 import 'package:my_app/viewmodels/partager_e_viewmodel.dart';
 import 'package:my_app/viewmodels/ticket_e_viewmodel.dart';
+import 'package:my_app/viewmodels/settings_viewmodel.dart';
+import 'package:my_app/viewmodels/about_viewmodel.dart';
+import 'package:my_app/viewmodels/general_info_viewmodel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,6 +60,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VoirDocumentViewModel()),
         ChangeNotifierProvider(create: (_) => PartagerViewModel()),
         ChangeNotifierProvider(create: (_) => TicketViewModel()),
+        ChangeNotifierProvider(create: (_) => SettingsViewModel()),
+        ChangeNotifierProvider(create: (_) => AboutViewModel()),
+        ChangeNotifierProvider(create: (_) => GeneralInfoViewModel()),
       ],
       child: MaterialApp(
         title: 'Mon Application',
