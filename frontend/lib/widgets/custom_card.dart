@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_app/core/constants/app_colors.dart';
-import 'package:my_app/models/menu_item.dart';
+import '../core/constants/app_colors.dart';
+import '../models/common/menu_item.dart';
 
 class MenuGridItem extends StatelessWidget {
   final DashboardMenuItem item;
