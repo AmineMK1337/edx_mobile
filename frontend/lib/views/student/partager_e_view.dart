@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/student/partager_e_viewmodel.dart';
-import '../models/upload_request_e_model.dart';
+import '../../models/student/upload_request_e_model.dart';
 import '../../core/constants/app_colors.dart';
 
 class UploadDocumentPage extends StatefulWidget {

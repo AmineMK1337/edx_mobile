@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/doc_request_e_model.dart';
+import '../../models/student/doc_request_e_model.dart';
 import '../../viewmodels/student/demandedoc_e_viewmodel.dart';
 import '../../core/constants/app_colors.dart';
 

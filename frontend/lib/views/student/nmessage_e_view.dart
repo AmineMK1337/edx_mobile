@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/student/nmessage_e_viewmodel.dart';
-import '../models/message_request_e_model.dart';
+import '../../models/student/message_request_e_model.dart';
 import '../../core/constants/app_colors.dart';
 
 class NouveauMessageScreen extends StatefulWidget {

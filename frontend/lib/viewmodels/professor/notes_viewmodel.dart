@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/professor/note_model.dart';
-import '../core/constants/app_colors.dart';
+import '../../core/constants/app_colors.dart';
 import '../../services/api_service.dart';
 
 class NotesViewModel extends ChangeNotifier {
