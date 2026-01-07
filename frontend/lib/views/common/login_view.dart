@@ -5,6 +5,7 @@ import '../../viewmodels/common/login_viewmodel.dart';
 import '../professor/home_view.dart';
 import '../student/student_e_view.dart';
 import '../auth/forgot_password_view.dart';
+import '../admin/admin_view.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -46,12 +47,25 @@ class _LoginScaffoldState extends State<_LoginScaffold> {
       final selectedRole = vm.selectedRole;
       final isStudent =
           role.contains('etudiant') || role.contains('student') || selectedRole == 0;
+      final isAdmin = 
+          role.contains('admin') || role.contains('administrateur') || selectedRole == 2;
+      final isProfessor = 
+          role.contains('prof') || role.contains('enseignant') || selectedRole == 1;
 
       if (isStudent) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const StudentHome()),
         );
+      } else if (isAdmin) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const AdminView()),
+        );
+      } else if (isProfessor) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeView()),
+        );
       } else {
+        // Default fallback - assume professor if role is unclear
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeView()),
         );

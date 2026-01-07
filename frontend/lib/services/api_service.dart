@@ -1,11 +1,32 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'auth_service.dart';
 
 class ApiService {
   static const String baseUrl = 'http://localhost:5000/api';
   static const Duration timeout = Duration(seconds: 30);
   static String? _token;
   static Map<String, dynamic>? _currentUser;
+
+  // Set token
+  static void setToken(String token) {
+    _token = token;
+  }
+
+  // Load token from storage
+  static Future<void> loadToken() async {
+    final authService = AuthService();
+    final token = await authService.getToken();
+    if (token != null) {
+      _token = token;
+      print('Token loaded from storage: ${_token?.substring(0, 20)}...');
+    }
+  }
+
+  // Clear token
+  static void clearToken() {
+    _token = null;
+  }
 
   // GET Request
   static Future<dynamic> get(String endpoint, {bool requiresAuth = false}) async {
@@ -135,6 +156,13 @@ class ApiService {
     if (response['token'] != null) {
       _token = response['token'];
       print('Token saved: ${_token?.substring(0, 20)}...');
+      
+      // Also store in AuthService for persistence
+      final authService = AuthService();
+      await authService.storeToken(_token!);
+      if (response['user'] != null) {
+        await authService.storeUserData(response['user']);
+      }
     } else {
       print('No token in response!');
     }

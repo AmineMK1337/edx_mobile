@@ -28,6 +28,10 @@ import 'package:my_app/viewmodels/student/nmessage_e_viewmodel.dart';
 import 'package:my_app/viewmodels/student/voir_document_e_viewmodel.dart';
 import 'package:my_app/viewmodels/student/partager_e_viewmodel.dart';
 import 'package:my_app/viewmodels/student/ticket_e_viewmodel.dart';
+// New Admin viewmodels
+import 'package:my_app/viewmodels/timetable_viewmodel.dart';
+import 'package:my_app/viewmodels/professor_session_view_model.dart';
+import 'package:my_app/viewmodels/chat_view_model.dart';
 
 void main() {
   runApp(const MyApp());
@@ -65,6 +69,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SettingsViewModel()),
         ChangeNotifierProvider(create: (_) => AboutViewModel()),
         ChangeNotifierProvider(create: (_) => GeneralInfoViewModel()),
+        // New Admin ViewModels
+        ChangeNotifierProvider(create: (_) => TimetableViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfessorSessionViewModel()),
+        ChangeNotifierProvider(create: (_) => ChatViewModel()),
       ],
       child: MaterialApp(
         title: 'Mon Application',

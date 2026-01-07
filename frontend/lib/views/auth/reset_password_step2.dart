@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewmodels/auth/reset_password_step2_viewmodel.dart';
-import '../login_view.dart';
+import '../common/login_view.dart';
 
 class ResetPasswordStep2View extends StatefulWidget {
   final String email;
@@ -223,11 +223,11 @@ class _ResetPasswordStep2ViewState extends State<ResetPasswordStep2View> {
                                     );
 
                                     // Wait a moment then navigate to login
-                                    await Future.delayed(const Duration(seconds: 1));
+                                    await Future.delayed(Duration(seconds: 1));
 
                                     if (context.mounted) {
                                       Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(builder: (_) => const LoginView()),
+                                        MaterialPageRoute(builder: (_) => LoginView()),
                                         (route) => false,
                                       );
                                     }

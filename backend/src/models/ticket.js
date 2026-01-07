@@ -1,5 +1,29 @@
 const mongoose = require("mongoose");
 
+const ticketReplySchema = new mongoose.Schema({
+  message: {
+    type: String,
+    required: true
+  },
+  sender: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  senderRole: {
+    type: String,
+    enum: ["admin", "student"],
+    required: true
+  },
+  attachments: [{
+    fileName: String,
+    fileUrl: String,
+    fileType: String
+  }]
+}, {
+  timestamps: true
+});
+
 const TicketSchema = new mongoose.Schema(
   {
     student: {
@@ -27,6 +51,7 @@ const TicketSchema = new mongoose.Schema(
     subject: String,
     message: String,
     response: String,
+    replies: [ticketReplySchema],
     status: {
       type: String,
       enum: ["pending", "in_progress", "approved", "rejected", "closed"],
@@ -35,6 +60,11 @@ const TicketSchema = new mongoose.Schema(
     answeredBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
+    },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high", "urgent"],
+      default: "medium"
     }
   },
   { timestamps: true }

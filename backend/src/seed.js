@@ -15,6 +15,8 @@ const Enrollment = require("./models/enrollment");
 const Document = require("./models/document");
 const Message = require("./models/message");
 const Announcement = require("./models/announcement");
+const Rattrapage = require("./models/rattrapage");
+const Room = require("./models/room");
 
 const connectDB = require("./config/db");
 
@@ -37,6 +39,8 @@ async function seedDB() {
     await Document.deleteMany({});
     await Message.deleteMany({});
     await Announcement.deleteMany({});
+    await Rattrapage.deleteMany({});
+    await Room.deleteMany({});
     console.log("Cleared existing data");
 
     // Create Academic Year
@@ -51,31 +55,31 @@ async function seedDB() {
 
     // Create Classes
     const classes = await Class.insertMany([
-      {
-        name: "2A",
-        level: "2",
-        section: "A",
-        academicYear: academicYear._id,
-        studentCount: 30,
-        isActive: true
-      },
-      {
-        name: "2B",
-        level: "2",
-        section: "B",
-        academicYear: academicYear._id,
-        studentCount: 0,
-        isActive: true
-      },
-      {
-        name: "3A",
-        level: "3",
-        section: "A",
-        academicYear: academicYear._id,
-        studentCount: 0,
-        isActive: true
-      }
+      // INDP1 Classes
+      { name: "INDP1A", level: "INDP1", section: "A", academicYear: academicYear._id, studentCount: 30, isActive: true },
+      { name: "INDP1B", level: "INDP1", section: "B", academicYear: academicYear._id, studentCount: 28, isActive: true },
+      { name: "INDP1C", level: "INDP1", section: "C", academicYear: academicYear._id, studentCount: 32, isActive: true },
+      { name: "INDP1D", level: "INDP1", section: "D", academicYear: academicYear._id, studentCount: 29, isActive: true },
+      { name: "INDP1E", level: "INDP1", section: "E", academicYear: academicYear._id, studentCount: 31, isActive: true },
+      { name: "INDP1F", level: "INDP1", section: "F", academicYear: academicYear._id, studentCount: 27, isActive: true },
+      
+      // INDP2 Classes  
+      { name: "INDP2A", level: "INDP2", section: "A", academicYear: academicYear._id, studentCount: 25, isActive: true },
+      { name: "INDP2B", level: "INDP2", section: "B", academicYear: academicYear._id, studentCount: 26, isActive: true },
+      { name: "INDP2C", level: "INDP2", section: "C", academicYear: academicYear._id, studentCount: 24, isActive: true },
+      { name: "INDP2D", level: "INDP2", section: "D", academicYear: academicYear._id, studentCount: 27, isActive: true },
+      { name: "INDP2E", level: "INDP2", section: "E", academicYear: academicYear._id, studentCount: 25, isActive: true },
+      { name: "INDP2F", level: "INDP2", section: "F", academicYear: academicYear._id, studentCount: 23, isActive: true },
+      
+      // INDP3 Classes
+      { name: "INDP3A", level: "INDP3", section: "A", academicYear: academicYear._id, studentCount: 22, isActive: true },
+      { name: "INDP3B", level: "INDP3", section: "B", academicYear: academicYear._id, studentCount: 24, isActive: true },
+      { name: "INDP3C", level: "INDP3", section: "C", academicYear: academicYear._id, studentCount: 21, isActive: true },
+      { name: "INDP3D", level: "INDP3", section: "D", academicYear: academicYear._id, studentCount: 23, isActive: true },
+      { name: "INDP3E", level: "INDP3", section: "E", academicYear: academicYear._id, studentCount: 20, isActive: true },
+      { name: "INDP3F", level: "INDP3", section: "F", academicYear: academicYear._id, studentCount: 22, isActive: true }
     ]);
+
     console.log("Classes created:", classes.length);
 
     // Create users - 30 students + professors
@@ -396,17 +400,22 @@ async function seedDB() {
     const tickets = await Ticket.insertMany([
       {
         student: allUsers[0]._id,
+        ticketType: "document_request",
+        documentType: "attestation_presence",
         subject: "Question sur l'examen",
         message: "Pourquoi la date de l'examen a changé ?",
-        status: "answered",
+        status: "approved",
         response: "L'examen a été reporté en raison d'un conflit d'horaire.",
         answeredBy: allUsers[32]._id,
       },
       {
         student: allUsers[1]._id,
+        ticketType: "exam_review",
+        courseName: "Algorithmes",
+        currentMark: 12,
         subject: "Problème d'accès aux ressources",
         message: "Je n'arrive pas à accéder aux documents du cours",
-        status: "open",
+        status: "pending",
       },
     ]);
     console.log("Tickets created:", tickets.length);
@@ -580,6 +589,173 @@ async function seedDB() {
       }
     ]);
     console.log("Announcements created:", announcements.length);
+
+    // Create Rooms
+    const rooms = await Room.create([
+      {
+        name: 'Amphi A',
+        type: 'Amphithéâtre',
+        capacity: 120,
+        hasProjector: true,
+        hasAirConditioning: true,
+        floor: 0,
+        building: 'Bâtiment Principal',
+        status: 'available',
+        equipment: [
+          { name: 'Projecteur', quantity: 1, status: 'working' },
+          { name: 'Micro', quantity: 2, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'Amphi B',
+        type: 'Amphithéâtre',
+        capacity: 150,
+        hasProjector: true,
+        hasAirConditioning: true,
+        floor: 0,
+        building: 'Bâtiment Principal',
+        status: 'available',
+        equipment: [
+          { name: 'Projecteur', quantity: 1, status: 'working' },
+          { name: 'Micro', quantity: 3, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'B200',
+        type: 'TD',
+        capacity: 40,
+        hasProjector: true,
+        hasAirConditioning: true,
+        floor: 2,
+        building: 'Bâtiment B',
+        status: 'available',
+        equipment: [
+          { name: 'Projecteur', quantity: 1, status: 'working' },
+          { name: 'Tableau', quantity: 1, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'B300',
+        type: 'TD',
+        capacity: 35,
+        hasProjector: true,
+        hasAirConditioning: true,
+        floor: 3,
+        building: 'Bâtiment B',
+        status: 'available',
+        equipment: [
+          { name: 'Projecteur', quantity: 1, status: 'working' },
+          { name: 'Tableau', quantity: 1, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'A200',
+        type: 'TD',
+        capacity: 45,
+        hasProjector: true,
+        hasAirConditioning: true,
+        floor: 2,
+        building: 'Bâtiment A',
+        status: 'available',
+        equipment: [
+          { name: 'Projecteur', quantity: 1, status: 'working' },
+          { name: 'Tableau', quantity: 1, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'A300',
+        type: 'TD',
+        capacity: 42,
+        hasProjector: true,
+        hasAirConditioning: true,
+        floor: 3,
+        building: 'Bâtiment A',
+        status: 'available',
+        equipment: [
+          { name: 'Projecteur', quantity: 1, status: 'working' },
+          { name: 'Tableau', quantity: 1, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'Lab Info 1',
+        type: 'Laboratoire',
+        capacity: 30,
+        hasProjector: true,
+        hasComputers: true,
+        hasAirConditioning: true,
+        floor: 1,
+        building: 'Bâtiment Informatique',
+        status: 'available',
+        equipment: [
+          { name: 'PC', quantity: 30, status: 'working' },
+          { name: 'Projecteur', quantity: 1, status: 'working' }
+        ],
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'Salle TD 1',
+        type: 'TD',
+        capacity: 40,
+        hasProjector: false,
+        floor: 1,
+        building: 'Bâtiment Principal',
+        status: 'available',
+        createdBy: allUsers[32]._id
+      },
+      {
+        name: 'Salle TD 2',
+        type: 'TD',
+        capacity: 40,
+        hasProjector: true,
+        floor: 1,
+        building: 'Bâtiment Principal',
+        status: 'maintenance',
+        createdBy: allUsers[32]._id
+      }
+    ]);
+    console.log("Rooms created:", rooms.length);
+
+    // Create Rattrapage sessions
+    const rattrapages = await Rattrapage.create([
+      {
+        subject: 'Réseaux Informatiques',
+        professor: allUsers[30]._id,
+        date: new Date('2024-02-15'),
+        time: '09:00',
+        room: 'Amphi A',
+        capacity: 50,
+        courseId: courses[0]._id,
+        status: 'scheduled',
+        description: 'Session de rattrapage pour le partiel de réseaux',
+        createdBy: allUsers[32]._id,
+        registeredStudents: [
+          { student: allUsers[0]._id },
+          { student: allUsers[1]._id }
+        ]
+      },
+      {
+        subject: 'Bases de Données',
+        professor: allUsers[31]._id,
+        date: new Date('2024-02-20'),
+        time: '14:00',
+        room: 'Lab Info 1',
+        capacity: 30,
+        courseId: courses[1]._id,
+        status: 'scheduled',
+        description: 'Rattrapage examen final BD',
+        createdBy: allUsers[32]._id,
+        registeredStudents: Array.from({ length: 25 }, (_, i) => ({
+          student: allUsers[i % 30]._id
+        }))
+      }
+    ]);
+    console.log("Rattrapages created:", rattrapages.length);
 
     console.log("\n✅ Database seeded successfully!");
     process.exit(0);

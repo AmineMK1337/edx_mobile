@@ -34,5 +34,12 @@ app.use("/api/settings", require("./routes/settings.routes"));
 app.use("/api/general-info", require("./routes/general_info.routes"));
 app.use("/api/school-info", require("./routes/school_info.routes"));
 app.use("/api/profile", require("./routes/profile.routes"));
+app.use("/api/timetables", require("./routes/timetables.routes"));
+
+// Admin routes
+app.use("/api/admin", require("./routes/admin.routes"));
+
+// User routes
+app.use("/api/user", require("./routes/user.routes"));
 
 module.exports = app;
