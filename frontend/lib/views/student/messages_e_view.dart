@@ -38,37 +38,87 @@ class _MessagesScreenState extends State<MessagesScreen> {
       ),
       body: viewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: () => viewModel.fetchMessages(),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 18),
-                    if (viewModel.messagesList.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: Text("Aucun message."),
+          : Column(
+              children: [
+                // Error message display
+                if (viewModel.errorMessage != null)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red[100],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red[300]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline, color: Colors.red[700]),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            viewModel.errorMessage!,
+                            style: TextStyle(color: Colors.red[700]),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.close, color: Colors.red[700]),
+                          onPressed: () => viewModel.clearError(),
+                        ),
+                      ],
+                    ),
+                  ),
+                
+                // Main content
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () => viewModel.fetchMessages(),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 18),
+                          if (viewModel.messagesList.isEmpty && viewModel.errorMessage == null)
+                            const Padding(
+                              padding: EdgeInsets.all(20.0),
+                              child: Column(
+                                children: [
+                                  Icon(Icons.message_outlined, size: 64, color: Colors.grey),
+                                  SizedBox(height: 16),
+                                  Text(
+                                    "Aucune conversation",
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    "Commencez une nouvelle conversation!",
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          
+                          // Liste des conversations
+                          ...viewModel.messagesList.map((msg) => _buildMessageCard(
+                                sender: msg.sender,
+                                role: msg.role,
+                                preview: msg.preview,
+                                time: msg.time,
+                                unread: msg.unread,
+                              )),
+
+                          const SizedBox(height: 20),
+
+                          // Bouton Nouveau Message
+                          _buildNewMessageButton(context),
+                          
+                          const SizedBox(height: 30),
+                        ],
                       ),
-                    
-                    // Liste générée
-                    ...viewModel.messagesList.map((msg) => _buildMessageCard(
-                          sender: msg.sender,
-                          role: msg.role,
-                          preview: msg.preview,
-                          time: msg.time,
-                          unread: msg.unread,
-                        )),
-
-                    const SizedBox(height: 20),
-
-                    // Bouton Nouveau Message
-                    _buildNewMessageButton(context),
-                    
-                    const SizedBox(height: 30),
-                  ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
     );
   }
