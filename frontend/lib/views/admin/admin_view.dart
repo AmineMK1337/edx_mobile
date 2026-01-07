@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../viewmodels/admin/admin_viewmodel.dart';
 import '../../services/auth_service.dart';
+import '../../services/api_service.dart';
 import '../common/login_view.dart';
+import '../common/role_home_layout.dart';
 
 // Import all admin views
 import 'user_view.dart';
@@ -38,151 +40,79 @@ class _AdminViewContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<AdminViewModel>(context);
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundMint,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            if (viewModel.stats != null) _buildStatsRow(viewModel),
-            Expanded(
-              child: _buildMenuGrid(context, viewModel),
-            ),
-          ],
-        ),
+    final statsList = viewModel.stats == null
+        ? <RoleStat>[]
+        : <RoleStat>[
+            RoleStat(
+                label: 'Tickets',
+                count: viewModel.stats!.ticketsCount.toString(),
+                color: Colors.orange),
+            RoleStat(
+                label: 'Utilisateurs',
+                count: viewModel.stats!.usersCount.toString(),
+                color: Colors.blue),
+            RoleStat(
+                label: 'Rattrapages',
+                count: viewModel.stats!.rattrapagesCount.toString(),
+                color: Colors.green),
+          ];
+
+    final grid = GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1,
       ),
+      itemCount: viewModel.menuItems.length,
+      itemBuilder: (context, index) {
+        final item = viewModel.menuItems[index];
+        return _buildMenuItem(
+            context, item.title, item.icon, item.color, index);
+      },
+    );
+
+    return RoleHomeLayout(
+      titleText: 'ESPACE ADMINISTRATION',
+      userName: ApiService.getUserName(),
+      userRoleDisplay: 'Administrateur',
+      stats: statsList,
+      menuGrid: grid,
+      onLogout: () => _handleLogout(context),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                color: AppColors.primaryPink,
-                size: 20,
-              ),
-            ),
+  void _handleLogout(BuildContext context) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Déconnexion'),
+        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
           ),
-          const SizedBox(width: 16),
-          const Text(
-            'Administration',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const Spacer(),
-            InkWell(
-              onTap: () async {
-                // Show confirmation dialog
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Déconnexion'),
-                    content: const Text('Voulez-vous vraiment vous déconnecter ?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Annuler'),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Déconnexion', style: TextStyle(color: Colors.red)),
-                      ),
-                    ],
-                  ),
-                );
-
-                if (confirm == true) {
-                  // Logout
-                  await AuthService().logout();
-                  if (context.mounted) {
-                    // Navigate to login screen
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (_) => const LoginView()),
-                      (route) => false,
-                    );
-                  }
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.logout,
-                  color: AppColors.primaryPink,
-                  size: 24,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                const Icon(
-                  Icons.notifications_outlined,
-                  color: Colors.grey,
-                  size: 24,
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primaryPink,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child:
+                const Text('Déconnexion', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
+
+    if (confirm == true) {
+      await AuthService().logout();
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const LoginView()),
+          (route) => false,
+        );
+      }
+    }
   }
 
   Widget _buildStatsRow(AdminViewModel viewModel) {
@@ -215,7 +145,8 @@ class _AdminViewContent extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String title, String value, IconData icon, Color color) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -269,26 +200,10 @@ class _AdminViewContent extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuGrid(BuildContext context, AdminViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1,
-        ),
-        itemCount: viewModel.menuItems.length,
-        itemBuilder: (context, index) {
-          final item = viewModel.menuItems[index];
-          return _buildMenuItem(context, item.title, item.icon, item.color, index);
-        },
-      ),
-    );
-  }
+  // _buildMenuGrid not used in new layout; retained helpers below
 
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon, Color color, int index) {
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon,
+      Color color, int index) {
     return InkWell(
       onTap: () => _navigateToPage(context, index),
       borderRadius: BorderRadius.circular(20),
